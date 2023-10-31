@@ -1,4 +1,4 @@
-# LCEVCdec.js 
+# LCEVCdecJS
 V-Nova's LCEVC decoder for web 
 
 ## Introduction 
