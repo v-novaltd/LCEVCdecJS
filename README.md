@@ -66,4 +66,3 @@ We would love to have your contributions. Please read [Contributing guidelines](
 * [Updating dependencies](docs/update_deps.md)
 * [Testing](docs/testing.md)
 * [Debugging tips](docs/debugging.md)
-* [Build checks](docs/ci.md)
