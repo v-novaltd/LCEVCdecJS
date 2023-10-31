@@ -18,7 +18,7 @@ This section describes the high-level process a contributor should go through wh
   **sensible clear and concise names** for everything. The style rules are mostly the same as the
   [Airbnb style](https://github.com/airbnb/javascript).
 
-- As a fellow contributor it is required that you take a **proactive** attitude towards **reviewing** other Merge Requests.
+- As a fellow contributor it is required that you take a **proactive** attitude towards **reviewing** other Pull Requests.
 
 - The above statement applies generally to the whole repository, you are just as responsible as anyone else to ensure
   that we are all collectively being hygienic with the repository.
@@ -27,15 +27,15 @@ This section describes the high-level process a contributor should go through wh
   for simple identification of the work item, i.e. "**{feature_name}**", for example:
   **perfect_time_residuals**. The recommendation is to stick to lower-case characters with underscore separation for words. It should provide a **clear & descriptive** name of the work item for the branch.
 
-- The branch must **ONLY** have functionality changes **pertaining** to the Jira ticket or specific work item. This is
+- The branch must **ONLY** have functionality changes **pertaining** to the specific work item. This is
   a firm requirement to make the lives of code reviewers easier. If you identify you need to make **additional changes**
-  that do not directly relate to the work in the ticket but you require to progress, then **spawn a separate branch**
-  from **main**, make the relevant modifications and launch a **separate Merge Request**. The goal of this is to
+  that do not directly relate to the current work but you require it to progress, then **spawn a separate branch**
+  from **main**, make the relevant modifications and launch a **separate Pull Request**. The goal of this is to
   help your fellow contributors perform swift and speedy reviews on bite-sized modifications, rather than monolithic
   sweeping changes.
 
 - As above, if you feel your branch is becoming too big, then figure out a way to break your
-  changes up into discrete blocks of functionality across several progressive Merge Requests. This may not always be possible, particularly for quite invasive changes. The goal of this
+  changes up into discrete blocks of functionality across several progressive Pull Requests. This may not always be possible, particularly for quite invasive changes. The goal of this
   is to be mindful of reviewers, and their limited time to perform reviews.
 
 - **Frequently synchronise** your branch against main to ensure you don't diverge too much during development, this
@@ -82,13 +82,13 @@ nominal compilation fixes can contain just a brief description, as these commits
 
 ## Pull Requests
 
-We utilise the Pull (Merge) Request feature in GitHub to perform **code reviews**. All changes must go through the review process. The **submitter** is entirely
+We utilise the Pull Request feature in GitHub to perform **code reviews**. All changes must go through the review process. The **submitter** is entirely
 **responsible** for ensuring that the review is happening in a timely fashion.
 
-Once you have completed your development it is time to submit a merge request, the following steps should be followed:
+Once you have completed your development it is time to submit a Pull request, the following steps should be followed:
 
 - **Automated testing** is fundamental to the maintenance of production-ready code. It is entirely your responsibility
-  to ensure that your changes are correctly tested. Merge Requests will be held up if there is not a testing component
+  to ensure that your changes are correctly tested. Pull Requests will be held up if there is not a testing component
   associated with it. If the answer to "**have I added to or modified the tests appropriately to cover my changes?**"
   is no then you have not yet finished your development phase, and must go back and implement some form of testing. We have some test suites in the repository under `test/`.
 
@@ -98,13 +98,13 @@ Once you have completed your development it is time to submit a merge request, t
   common sense should be applied, you are the person making the changes you will probably be the person to return to them
   at some point.
 
-- Raise a Merge Request **clear & concise** description of the changes and why you arrived at this solution.
+- Raise a Pull Request **clear & concise** description of the changes and why you arrived at this solution.
 
-- **Assign** the Merge Request to a peer who is most responsible for the area you are modifying, you can also tag other
+- **Assign** the Pull Request to a peer who is most responsible for the area you are modifying, you can also tag other
   people through a comment to make them aware of your request; it is recommended to do so as it should help speed up the
   process.
 
-- Merge Request submission will automatically trigger the CI system. If compilation fails you
+- Pull Request submission will automatically trigger the CI system. If compilation fails you
   are responsible for understanding why and resolving.
 
 - After the CI has performed compilation the test suite is run on the artifacts produced, if this fails you are responsible
@@ -114,8 +114,7 @@ Once you have completed your development it is time to submit a merge request, t
   towards it) where the code-review process will be performed, be prepared to be challenged on your decisions, do not
   take offence if there's a lot of activity here, it probably means you're touching something critical.
 
-- Once all discussion points are completed, and there's a general consensus that the changes are valid, then they can
-  be merged, the preference is to use the GitHub interface to perform this.
+- Once all discussion points are completed, and there's a general consensus that the changes are valid, then they can be merged, the preference is to use the GitHub interface to perform this.
 
 - Finally, **delete the remote branch** that tracked your work, it is no longer relevant as your
 changes are now in the main.
