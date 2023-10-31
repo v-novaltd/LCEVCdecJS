@@ -1,0 +1,4 @@
+src/shaders/
+src/libs/
+src/patches/
+**/*.ts

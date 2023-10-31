@@ -1,0 +1,97 @@
+Copyright (c) V-Nova International Limited 2023. All rights reserved. 
+Licensed under V-Nova's proprietary licence. 
+--------------------------------------------------
+V-Nova LCEVCdec.js is licensed for use as follows: 
+--------------------------------------------------
+
+V-Nova hereby grants a temporary, non-exclusive, non-transferable (without the right to sublicense), 
+limited licence, for a period of 6 months, only, to anyone obtaining a copy of (the “Licensee”) the V-Nova LCEVCdec.js
+and the associated documentation (“Software”), in object code form only, solely for purpose of internal integration,
+testing and demonstration of the Software to assess whether the Software is suitable for commercial deployment
+(provided always that commercial deployment shall be permitted only if the Licensee has entered into a separate written
+ licence agreement with V-Nova in respect of such deployment). 
+ 
+TO THE EXTENT ALLOWED BY APPLICABLE LAW, THE SOFTWARE IS PROVIDED "AS IS" WITHOUT ANY WARRANTY OR CONDITION OF ANY KIND,
+INCLUDING WITHOUT LIMITATION, ANY WARRANTY OF NON-INFRINGEMENT OF INTELLECTUAL PROPERTY RIGHTS. 
+V-NOVA HEREBY EXCLUDES AND DISCLAIMS ALL WARRANTIES, CONDITIONS, OR OTHER TERMS, AND ALL REPRESENTATIONS OR OTHER STATEMENTS,
+WHETHER ORAL OR IN WRITING, EXPRESS OR IMPLIED, TO THE MAXIMUM EXTENT PERMITTED BY LAW.  
+ 
+IN NO EVENT SHALL V-NOVA BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+(INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+HOWSOEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.  
+
+The Licensee acknowledges and agrees that it shall have no right to, shall not, and shall not suffer any person to:  
+(a) sublicense, assign, convey, transfer, share, distribute, propagate, the Software;   
+(b) merge, modify, enhance, adapt, translate, make improvements to, create derivative works based upon, the Software;  
+(c) disassemble, decompile, reverse engineer, reduce to any human or machine perceivable form, or circumvent any technological
+   measure that controls access to or permits derivation of the source code of the Software to the extent permitted by applicable mandatory law;  
+(d) change, distort, obscure, delete or remove any patent, trade mark, copyright or other proprietary notices which appear in writing on or in the Software;  
+(e) impose any condition or obligation on V-Nova under copyleft terms (including, without limitation, any obligation to disclose,
+   publish and/or license any code in the Software);  
+(f) operate or make use of a Deliverable that in any way violates applicable laws and regulations; and/or  
+(g) take or permit any other action which could impair or encumber V-Nova’s ownership of or Intellectual Property Rights in the Software.  
+
+--------------------------------------------------
+The externally maintained libraries used by LCEVCdec.js are: 
+- mp4box.js is licensed for use as follows: 
+--------------------------------------------------
+Copyright (c) 2012. Telecom ParisTech/TSI/MM/GPAC Cyril Concolato 
+
+All rights reserved. 
+
+Redistribution and use in source and binary forms, with or without 
+modification, are permitted provided that the following conditions are met: 
+   * Redistributions of source code must retain the above copyright 
+     notice, this list of conditions and the following disclaimer. 
+   * Redistributions in binary form must reproduce the above copyright 
+     notice, this list of conditions and the following disclaimer in the 
+     documentation and/or other materials provided with the distribution. 
+   * Neither the name of the copyright holder nor the 
+     names of its contributors may be used to endorse or promote products 
+     derived from this software without specific prior written permission. 
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
+ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED 
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE 
+DISCLAIMED. IN NO EVENT SHALL <COPYRIGHT HOLDER> BE LIABLE FOR ANY 
+DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES 
+(INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; 
+LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND 
+ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT 
+(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS 
+SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+--------------------------------------------------
+- rollup 
+--------------------------------------------------
+Rollup is released under the MIT license: 
+The MIT License (MIT) 
+Copyright (c) 2017 these people 
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation
+files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy,
+modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the
+Software is furnished to do so, subject to the following conditions: 
+The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software. 
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
+OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR
+IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE. 
+
+-------------------------------------------------- 
+- node-ebml 
+--------------------------------------------------
+Copyright (c) 2013-2018 Mark Schmale and contributors 
+Permission is hereby granted, free of charge, to any person obtaining a copy of 
+this software and associated documentation files (the "Software"), to deal in 
+the Software without restriction, including without limitation the rights to 
+use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies 
+of the Software, and to permit persons to whom the Software is furnished to do 
+so, subject to the following conditions: 
+The above copyright notice and this permission notice shall be included in all 
+copies or substantial portions of the Software. 
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS 
+FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR 
+COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER 
+IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN 
+CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE 
+-------------------------------------------------- 
