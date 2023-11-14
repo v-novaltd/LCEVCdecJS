@@ -1,21 +1,10 @@
 # LCEVCdecJS
 V-Nova's LCEVC decoder for web 
 
-## Introduction 
+## About
 
+This project is V-Nova's implementation of the LCEVC (MPEG-5 Part 2) decoder for web-based playback. To learn what the LCEVC (Low Complexity Enhancement Video Coding) codec is and how it works, please refer to the [V-Nova documentation portal](https://docs.v-nova.com/v-nova/lcevc/lcevc-sdk-overview).
 
-This project is V-Nova's implementation of the LCEVC (MPEG-5 Part 2) decoder for web-based playback. 
-
-
-MPEG-5 Part 2 LCEVC (Low Complexity Enhancement Video Coding) is the latest standard by MPEG and ISO. It specifies an enhancement layer which, when combined with a base video encoded with a separate codec, produces an enhanced video stream. It is suitable for software processing implementation with sustainable power consumption. The enhancement stream provides new features such as: 
-
-- Extending the compression capability of the base codec 
-
-- Lowering encoding and decoding complexity 
-
-- Providing a platform for additional future enhancements 
-
-More on [MPEG-5 Part 2 LCEVC](https://www.lcevc.org/).  
 ## Prerequisites 
 
 Only supported on browsers with [Media Source Extensions](https://caniuse.com/?search=media%20source%20extensions) support. 
@@ -56,13 +45,11 @@ Detailed documentation is available for the different parts of LCEVCdecJS:
 * [Queue](docs/dec/queue.md)
 * [Renderer](docs/dec/renderer.md)
 * [Demuxer worker](docs/dec/demuxer_worker.md)
-
-## Contributing
-
-We would love to have your contributions. Please read [Contributing guidelines](CONTRIBUTING.md) for more information on how to contribute.
-
-* [Contributing guidelines](CONTRIBUTING.md)
 * [Project structure](docs/structure.md)
 * [Updating dependencies](docs/update_deps.md)
-* [Testing](docs/testing.md)
-* [Debugging tips](docs/debugging.md)
+
+## License
+
+Copyright © V-Nova Limited 2023
+
+This software is protected by copyrights and other intellectual property rights and no license is granted to any such rights. If you would like to obtain a license to compile, distribute, or make any other use of this software, please contact V-Nova Limited info@v-nova.com.
