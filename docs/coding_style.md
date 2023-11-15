@@ -5,7 +5,7 @@ modifications.
 
 ## Linter
 
-The first step of the pipeline will lint the files. It checks that changes submitted are complying with repo rules. For `js` and `ts` files it uses the Airbnb coding style with some
+The first step of the pipeline will lint the files which checks that the submitted changes comply with repo rules. For `js` and `ts` files it uses the Airbnb coding style with some
 modifications.
 
 ## Javascript or Typescript?
@@ -13,33 +13,33 @@ modifications.
 We are changing the code to TypeScript, so new modules should be coded in that
 way.
 
-Why Typescript? Because it is static typed and is better to handle large code
-base typical problems.
+Why Typescript? Because it is static typed and better able to handle the typical problems associated with large code
+bases.
 
 ## Public, private and exported functions
 
-To ensure the minifier work as intended we should follow the next rules
+To ensure the minifier work as intended we should use the following rules
 for names regarding the type of the member. Every member that starts with
-an underscore is going to be mangle.
+an underscore is going to be mangled.
 
-Exported members are the ones that appear at the public API and their name
+Exported members will appear at the public API level and their name
 should be `camelCase`.
 
-Public members are those ones that can be used between modules. We don't want
-that they can be seen outside so their names should be `_camelCase`.
+Public members can be used between modules but shouldn't be seen outside those modules so their names should be `_camelCase`.
 
-Private members are all of these members that is only used inside of a module.
-We follow new standard proposed (is at Stage 3 when this was written), so they
-should be `#camelCase`.
+Private members should only be used inside of a module and should be should be `#camelCase` following the new proposed standard (currently on Stage 3 at time of writing).
 
-This is not check at the linter, so please make sure you follow this convention.
+These naming conventions are not checked by the linter, so please make sure your naming conforms to these standards.
 
 ## Why no `continue` support?
 
-The `continue` command for jump to the next iteration on a loop can be useful.
-However, most of the time can be ommited if that kind of data is not added
-into the data structure or if it added in the middle of the scope of the loop
-can be hard to spot.
+The 'continue' command jumps to the next iteration of a loop without executing
+the rest of the loop. While in certain specific circumstances 'continue'
+can be useful, it is generally considered better practice to omit write loops without 'continue' as it can reduce
+readibility and redirect code execution in unexpected ways.
 
-By default is check as an error, but if by removing it makes the code uglier or
-needs to add more complexity, then disable the lint for that line where it is.
+## Disabling the linter
+
+The linter will check for errors by default but it can be disabled if the resulting fix makes the code overly complex or less readable,
+or if the linter is incorrectly reporting a failure - for instance if the global variable is defined in another file but linter does not see it, 
+the linter can be disabled where the global variable is accessed by adding // eslint-disable-line at the errored line.
