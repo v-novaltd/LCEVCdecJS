@@ -14,7 +14,7 @@ intended:
   been made.
 
 * Play a stream and then pause it and change the shader or toggle LCEVC.
-  Play the stream again and check that there is no shuttering. 
+  Play the stream again and check that there is no stuttering. 
 
 * Play a stream, enable the 50/50 view, and then pause the video. Check that the paused image
   is the same as the native player.
