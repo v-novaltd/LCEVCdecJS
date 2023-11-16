@@ -35,7 +35,7 @@ These naming conventions are not checked by the linter, so please make sure your
 
 The 'continue' command jumps to the next iteration of a loop without executing
 the rest of the loop. While in certain specific circumstances 'continue'
-can be useful, it is generally considered better practice to omit write loops without 'continue' as it can reduce
+can be useful, it is generally considered better practice to omit and write loops without 'continue' as it can reduce
 readibility and redirect code execution in unexpected ways.
 
 ## Disabling the linter
