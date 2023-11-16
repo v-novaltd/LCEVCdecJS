@@ -42,4 +42,4 @@ readibility and redirect code execution in unexpected ways.
 
 The linter will check for errors by default but it can be disabled if the resulting fix makes the code overly complex or less readable,
 or if the linter is incorrectly reporting a failure - for instance if the global variable is defined in another file but linter does not see it, 
-the linter can be disabled where the global variable is accessed by adding // eslint-disable-line at the errored line.
+the linter can be disabled where the global variable is accessed by adding `// eslint-disable-line` at the errored line.
