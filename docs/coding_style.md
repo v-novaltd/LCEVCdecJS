@@ -25,7 +25,7 @@ an underscore is going to be mangled.
 Exported members will appear at the public API level and their name
 should be `camelCase`.
 
-Public members can be used between modules but shouldn't be seen outside those modules so their names should be `_camelCase`.
+Public members that could be used between modules but shouldn't be seen at the public API level should be named using `_camelCase` convention.
 
 Private members should only be used inside of a module and should be should be `#camelCase` following the new proposed standard (currently on Stage 3 at time of writing).
 
