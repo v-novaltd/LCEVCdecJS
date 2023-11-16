@@ -1,9 +1,9 @@
 # Debugging
 
-## How to inspect private members with DevTools
+## How to inspect the value of private members with DevTools
 
-The private members can't be seen in the DevTools, altought, there is a way to
-get it value by calling to `_classPrivateFieldGet`. So, if we had the next code:
+Normally the value of private members can't be seen in the DevTools, however the value
+can be retrieved by calling `_classPrivateFieldGet`. For example, with the following code:
 
 ```js
 Class A {
@@ -15,9 +15,8 @@ Class A {
 }
 ```
 
-In order to get the value of the variable `#name` if we set a breakpoint in
-some part of the class A code, by running the following command we will retrieve
-the value from it:
+To get the value of the variable `#name` we set a breakpoint in the Class A code 
+and run the following command:
 
 ```bash
 _classPrivateFieldGet(this, _name)
