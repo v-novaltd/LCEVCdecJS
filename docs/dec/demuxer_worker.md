@@ -1,35 +1,34 @@
 # Demuxer worker
 
-The demuxer worker is in charge of finding LCEVC data in a buffer and send it
+The demuxer worker is in charge of finding LCEVC data in a buffer and sending it
 back to LCEVCdec.
 
-The worker process the message from LCEVCdec and depeding the `id` value do
-different things:
+The worker processes the messages from LCEVCdec and, depending on the `id` value, acts in the following ways:
 
-* `config`: Set the logging level on the worker.
-* `reset`: Reset the Demuxer.
-* `demux`: Process the received buffer.
+* `config`: Sets the logging level on the worker.
+* `reset`: Resets the Demuxer.
+* `demux`: Processes the received buffer.
 
 ## Demuxing
 
-The message with the id `demux` holds:
+The message with the id `demux` contains:
 
 * The buffer.
-* Start time of the buffer.
-* End time of the buffer.
-* Level/profile/quality value.
-* Fragment type.
+* The start time of the buffer.
+* The end time of the buffer.
+* The level/profile/quality values.
+* The fragment type.
 
-This buffer is send to the Demuxer. Depending the type of
-fragment it will use a different parser. For example, if a `mp4` fragment is
-sent in the following diagram we can see how it is processed:
+This buffer is sent to the demuxer. Different parsers will be used 
+depending on the fragment type. For example, the following diagram 
+shows how an `mp4` fragment is processed:
 
 ![alt text](assets/appendbuffer.png "Append buffer")
 
-The buffer is sent to the demuxer and the header will be process to find the
-`baseMediaDecodeTime`. Then, the buffer will be appened to `mp4box.js` and
-for every sample it finds it will call the `onSample` function. For every
+The buffer is sent to the demuxer and the header will be processed to find the
+`baseMediaDecodeTime`. After this, the buffer will be appended to `mp4box.js` and 
+will call the `onSample` function for every sample found. For every
 sample, the CTS and PTS will be fixed using the `baseMediaDecodeTime`. Check
-if the CTS and PTS is inside the `start` and `end` time of the buffer and
-find LCEVC data. If LCEVC data is found, sent it to LCEVCdec. When all the
-sample are processed, the demuxer ends and wait for more messages.
+that the CTS and PTS are inside the `start` and `end` times of the buffer and can
+find the LCEVC data. If LCEVC data is found, send it to LCEVCdec. When all the
+samples are processed, the demuxer finishes and waits for more messages.
