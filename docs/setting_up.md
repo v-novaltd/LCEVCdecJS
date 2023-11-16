@@ -41,7 +41,7 @@ sudo apt-get install -y nodejs
 
 ### Installing Git
 
-NodeJs for Windows is available for download
+Git for Windows is available for download
 [here](https://git-scm.com/download/win).
 
 ### Installing Python 3.7
