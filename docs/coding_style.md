@@ -18,7 +18,7 @@ bases.
 
 ## Public, private and exported functions
 
-To ensure the minifier work as intended we should use the following rules
+To ensure the minifier works as intended we should use the following rules
 for names regarding the type of the member. Every member that starts with
 an underscore is going to be mangled.
 
