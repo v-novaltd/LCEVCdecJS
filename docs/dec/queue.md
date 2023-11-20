@@ -19,9 +19,9 @@ First the function gets an empty frame from the queue, either a new frame or a f
 has been reset. If the queue is full no new frames can be added, attempted additions will
 fail. If an empty frame is received, the frame captures the video as a texture.
 
-Then it tries to parse LCEVC data for the current timestamp of the video. If
+The funtion then tries to parse LCEVC data for the current timestamp of the video. If
 LCEVC is found, it decodes the LoQ0 and LoQ1 as a texture if they are needed.
-If no LCEVC is found, it skip the previous step.
+If no LCEVC is found, it skips the previous step.
 
 Finally, the frame is rendered using the selected shader. This last step is
 explained in depth at [the renderer document](renderer.md#PresentFrame)
@@ -29,16 +29,16 @@ explained in depth at [the renderer document](renderer.md#PresentFrame)
 ## Update queue
 
 Before presenting a frame `update queue` needs to be called. This function
-selects the next frame from the queue to be presented
-when the `present frame` function is called. The 'update queue' function
-will also reset and set for reuse the old or no longer needed frames.
+selects the next frame from the queue to be presented when the `present frame` 
+function is called. The 'update queue' function will also reset and set for reuse 
+the old or no longer needed frames.
 
 In the next diagram we can see steps done by the function:
 
 ![alt text](assets/update_queue.png "Update queue")
 
 First, the function iterates through the frames on the queue, collecting the
-obsolete frames to store for resetting. Then it will select the oldest frame
+obsolete frames to store for resetting. It will then select the oldest frame
 out of the frames that are suitable for rendering and set that frame as the current
 frame to be presented.
 
@@ -46,20 +46,20 @@ At the end, all the old frames are reset and set for reuse.
 
 ## Present frame
 
-Present frame gets the index of the current frame of the queue that was set when
+Present frame gets the index of the current frame, which was set when
 `update queue` was call. This index is used to display the frame. In the following
 diagram we can see what it does:
 
 ![alt text](assets/present_frame.png "Present frame")
 
-The 'present frame' function gets the frame that is selected to be rendered. The canvas size 
+The 'present frame' function gets the frame selected to be rendered. The canvas size 
 is changed to match the frame size. If `renderAtDisplaySize` is
 set to `true` and the canvas size is smaller than the frame size, it will use
 the width of the canvas size and it will calculate the height using the
-aspect ratio of the frame. This is done to reduce the GPU performance supersampling is avoided.
+aspect ratio of the frame. This is done to reduce the GPU performance and avoid supersampling.
 
 Finally, call [render to screen](renderer.md#RenderToScreen) so the Renderer
 displays the frame on the canvas.
 
-This function can be called when passing a frame and it will use that frame instead
+This function can be called when passing a frame and it will use that frame instead of
 the one that is selected to be displayed.
