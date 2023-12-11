@@ -1,94 +1,89 @@
 # LCEVCdec
 
-The LCEVCdec class is the one that is constructed outside as LCEVCdec.
+The LCEVCdec class is constructed outside as LCEVCdec.
 
-The class initialise all the module and interact with them and with the
+This class initialises all the modules and interacts with them and with the
 video events.
 
-## Experimental features.
+## Experimental features
 
-The draft function `videoFrameCallback` is used if the browser have it. This
-function call the passed function when the video has render a new frame. It
-also provide some metadata info about the video. This function is helpful
-to only input new frames when they are rendered.
+The draft function `videoFrameCallback` is used if the requestVideoFrameCallback API
+is available in the browser. This allows the developer to register a callback function that runs 
+when each video frame has been rendered by the browser. It also provides metadata about the video. 
+This function is helpful in only inputting new frames when they are rendered.
 
 ## Main loop
 
-Onces the LCEVCdec is created it uses `requestAnimationFrame` to run a loop. In
-the following diagram we can see at the right branch what the loops does:
+Once the LCEVCdec is created it uses `requestAnimationFrame` to run a loop. In
+the following diagram we can see what the loop does in the right branch:
 
 ![alt text](assets/video_flow.png "Video flow")
 
-If `videoFrameCallback` is not present at the browser, we get a new frame
-from the video. Then the queue is updated and present the frame with the one
-that has been selected when updating the queue. Then it updates the video controls, stats and DPS.
+If `videoFrameCallback` is not present in the browser, we get a new frame
+from the video. Upon receiving a new frame, the queue is updated
+to collect all frames whos presentation time has passed. The current
+frame is kept, as it may still be on screen. The frame that has been
+selected when updating the queue will be presented. Afterwards
+the video controls, stats and DPS are updated.
 
-At the end, `requestAnimationFrame` is used again to call the same function.
+Finally, `requestAnimationFrame` is used again to call the same function.
 
-Not having the `videoFrameCallback` makes it miss frame or try to input already
-inputed frames.
+Not having the `videoFrameCallback` function can result in missed frames or the attempted input of
+previously inputted frames. 
 
 ## Append a buffer
 
 In order to get LCEVC data from a video, the public function `append buffer` is
 used to parse the LCEVC data.
 
-The functions needs the buffer, the type of buffer, the level/profile/quality
-and the start and end time of this buffer.
+The function needs the buffer, the type of buffer, and the level/profile/quality
+of this buffer.
 
-The level is only use to not render LCEVC from another level when we are playing
-a different one.
+The level is used to ensure LCEVC isn't rendered from a different level to the one being played from.
 
-The start and end time are optional, but for best result it is advisable. This
-times represent the interval of time this buffer is.
 
-All this data is send to the Demuxer worker that will find the LCEVC data and
-send us message with every one of them.
+This data is sent to the demuxer worker which will then locate the LCEVC data to send on to the LCEVCdec.
 
 ## Video events
 
-Some events of the video are listened in order to mimic the native player. This
-ones are:
+Some video events are listed in order to mimic the native player. These are:
 
 * loadeddata:
-  * Check if the video is a live one.
-  * Update the controls to reflect the previous check.
-  * If poster frame is enable, render it.
+  * Checks if the video is live.
+  * Updates the controls to reflect the live video check.
+  * If poster frame is enabled, render it.
 * play:
-  * If it is the first time, enable the queue rendering.
-  * Reset the presentation time at the Queue.
-  * Refresh the video controls icons.
+  * If it is the first time, enable queue rendering.
+  * Reset the presentation time in the Queue class.
+  * Refresh the video control icons.
 * pause:
-  * Reset the presentation time at the Queue.
-  * Refresh the video controls icons.
+  * Reset the presentation time in the Queue class.
+  * Refresh the video control icons.
 * seeked:
-  * If the queue rendering is disable, enable it to show the right frame.
+  * If the queue rendering is disabled, enable it to show the right frame.
   * Reset the queue.
-  * If the last frame had LCEVC, clear the temporal for not show wrong
+  * If the last frame had LCEVC, clear the temporal to avoid showing wrong
     residuals.
-  * If video is paused, force to add a new frame to the queue. This is done
-    because `videoFrameCallback` is asynchronous and can be call before this
-    event and by reseting the queue and clearing the temporal we can miss the
-    new frame or show a black one.
-* render: This is a custom event used to force input a frame to the queue
-  so when a change of shader or toggling LCEVC the display is updated when the
-  video is paused.
-* resizing: If paused, re-render again to use the proper player size.
+  * If video is paused, force a new frame to be added to the queue. This is done
+    because `videoFrameCallback` is asynchronous and can be called before this
+    event, which would cause the queue to be reset and the temporal cleared potentially resulting in a
+    new frame being missed or a black frame being shown.
+* render: This is a custom event forcing the input of a frame to the queue
+  and updating the display if the shader is changed or LCEVC is toggled when the video is paused.
+* resizing: If paused, re-render to use the proper player size.
 * timeupdate: Update our internal current time of the video.
 
 ## DPS
 
-The dynamic performance scaling or DPS checks if it is dropping lots of frames
-and disable LCEVC for some time. If it is triggered again in a short period of
-time, the disabled time will be higher and if it is done in three times in a row
-the LCEVC will be always disable.
-
-If when it is enable again it has pass a long period of time, the disable time
-it is reset as default.
+The dynamic performance scaling or DPS checks the amount of dropped frames, automatically
+disabling the LCEVC briefly if too many frames are being lost. If the rate of dropped frames
+results in the LCEVC being disabled a second time, the period of disablement will be longer. 
+If triggered three times in a row the LCEVC will be permanently disabled and must be manually re-enabled.
+The time spent disabled will reset to default if the DPS conditions are not triggered for a longer period of time. 
 
 ## Events
 
 LCEVCdec triggers when there are changes at the DPS:
 
-* PERFORMANCE_DROPPED: when the DPS is enable.
-* PERFORMANCE_RESTORED: when the DPS is disable.
+* PERFORMANCE_DROPPED: when the DPS is enabled.
+* PERFORMANCE_RESTORED: when the DPS is disabled.
