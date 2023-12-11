@@ -5,7 +5,7 @@ It then renders a frame to the screen.
 
 ## Render frame
 
-The queue stores the pre-rendered frames as textures so when they are displayed
+The Queue stores the pre-rendered frames as textures so when they are displayed
 most of the work is done. There are multiple ways of rendering a frame, for example: 1D 
 with LCEVC, 2D with LCEVC, base only, etc. In the following diagram we
 can see the steps done with 2D with LCEVC:
