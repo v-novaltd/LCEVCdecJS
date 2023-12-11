@@ -52,7 +52,7 @@ diagram we can see what it does:
 
 ![alt text](assets/present_frame.png "Present frame")
 
-The 'present frame' function gets the frame selected to be rendered. The canvas size 
+The `present frame` function gets the frame selected to be rendered. The canvas size 
 is changed to match the frame size. If `renderAtDisplaySize` is
 set to `true` and the canvas size is smaller than the frame size, it will use
 the width of the canvas size and it will calculate the height using the
