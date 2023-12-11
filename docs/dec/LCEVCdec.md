@@ -41,7 +41,6 @@ of this buffer.
 
 The level is used to ensure LCEVC isn't rendered from a different level to the one being played from.
 
-The start and end times represent the buffer's length of time. Their input is optional, but it is advisable to add them for the best results.
 
 This data is sent to the demuxer worker which will then locate the LCEVC data to send on to the LCEVCdec.
 
