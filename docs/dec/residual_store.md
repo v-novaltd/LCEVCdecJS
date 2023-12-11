@@ -21,7 +21,7 @@ where it will be added. Since the segments represent a second of time, by dividi
 the timestamp by the segment size we get the index where it should be.
 
 A new group is then created with the data and the index of this
-group is stored, in order in the index group of the segment. For this, a binary search
+group is stored in an ordered array that belongs to the segment. For this, a binary search
 is used to insert it in O(N * log (N)) time (being N the index groups size).
 
 The residual data covers a time interval, so when it is added this data may
