@@ -17,7 +17,7 @@ video texture with the LoQ0 texture. Then it is upscaled horizontally and upscal
 while it is merged with LoQ1.
 
 The merged texture is converted back to RBG, so it can be displayed by
-WebGL at the canvas.
+WebGL on the canvas.
 
 The other ways of rendering a frame are generally equivalent. In order to merge
 with LCEVC data, all of them have to convert the video texture to YUV, after which 
