@@ -47,7 +47,7 @@ At the end, all the old frames are reset and set for reuse.
 ## Present frame
 
 Present frame gets the index of the current frame, which was set when
-`update queue` was call. This index is used to display the frame. In the following
+`update queue` was called. This index is used to display the frame. In the following
 diagram we can see what it does:
 
 ![alt text](assets/present_frame.png "Present frame")
