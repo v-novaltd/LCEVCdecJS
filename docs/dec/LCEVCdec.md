@@ -36,8 +36,8 @@ previously inputted frames.
 In order to get LCEVC data from a video, the public function `append buffer` is
 used to parse the LCEVC data.
 
-The function needs the buffer, the type of buffer, the level/profile/quality
-and the start and end time of this buffer.
+The function needs the buffer, the type of buffer, and the level/profile/quality
+of this buffer.
 
 The level is used to ensure LCEVC isn't rendered from a different level to the one being played from.
 
