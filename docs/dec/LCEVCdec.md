@@ -50,7 +50,7 @@ Some video events are listed in order to mimic the native player. These are:
 
 * loadeddata:
   * Checks if the video is live.
-  * Updates the controls to reflect the previous check.
+  * Updates the controls to reflect the live video check.
   * If poster frame is enabled, render it.
 * play:
   * If it is the first time, enable queue rendering.
