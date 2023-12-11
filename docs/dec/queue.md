@@ -1,12 +1,12 @@
 # Queue
 
-The queue stores frames that will be render lately. Decoding frames adds an
-overhead, so it is hard to decode on the fly. Using a queue it is possible
-to have decode frames asynchronously while rendering.
+The queue stores frames to be rendered. Decoding frames adds an
+overhead, so it is hard to decode on the fly. Using a queue makes it possible
+to decode frames asynchronously while rendering.
 
-The queue can store a static number of frames, by default is set to 10. Once
-a frame is added to the queue, when it is no longer needed is reset and set
-for reused. This is due to JS slow GC.
+The queue can store a static number of frames, which by default is set to 10. Once
+a queued frame is no longer needed, the frame is reset and set
+for reuse. This is due to slow garbage collection in JavaScript.
 
 ## Input frame
 
@@ -15,52 +15,51 @@ what it does:
 
 ![alt text](assets/input_frame.png "Input frame")
 
-First it gets an empty frame from the queue, could be a new one or one that was
-reset. If the queue is full, it fails to add a new queue. If a empty frame is
-got, it captures the video as a texture.
+First the function gets an empty frame from the queue, either a new frame or a frame that 
+has been reset. If the queue is full no new frames can be added, attempted additions will
+fail. If an empty frame is received, the frame captures the video as a texture.
 
-Then it tries to parse LCEVC data for the current timestamp of the video. If
+The funtion then tries to parse LCEVC data for the current timestamp of the video. If
 LCEVC is found, it decodes the LoQ0 and LoQ1 as a texture if they are needed.
-If no LCEVC is found, it skip the previous step.
+If no LCEVC is found, it skips the previous step.
 
-Finally, the frame is render using the selected shader. This last step is
-explain in depth at [the renderer document](renderer.md#PresentFrame)
+Finally, the frame is rendered using the selected shader. This last step is
+explained in depth at [the renderer document](renderer.md#PresentFrame)
 
 ## Update queue
 
-Before presenting a frame we need to call to `update queue`. This function
-is in charge of selecting the next frame of the queue that will be presented
-when the `present frame` function is call and also, will reset and set for
-reused the old or no longer needed frames.
+Before presenting a frame `update queue` needs to be called. This function
+selects the next frame from the queue to be presented when the `present frame` 
+function is called. The `update queue` function will also reset and set for reuse 
+the old or no longer needed frames.
 
 In the next diagram we can see steps done by the function:
 
 ![alt text](assets/update_queue.png "Update queue")
 
-First, it iterates the frames on the queue and collects the frames whos time
-has passed and store them for later reset them. For frames that are suitable
-for rendering, it will select the older one and select it as the current
+First, the function iterates through the frames on the queue, collecting the
+obsolete frames to store for resetting. It will then select the oldest frame
+out of the frames that are suitable for rendering and set that frame as the current
 frame to be presented.
 
-At the end, all those old frames are reset and set for reused.
+At the end, all the old frames are reset and set for reuse.
 
 ## Present frame
 
-Present frame gets the index of the frame of the queue that was set when
-`update queue` was call, and use it for displaying it. In the following
+Present frame gets the index of the current frame, which was set when
+`update queue` was called. This index is used to display the frame. In the following
 diagram we can see what it does:
 
 ![alt text](assets/present_frame.png "Present frame")
 
-Gets the frame that is selected to be render. The canvas size is change to
-match the frame size. If `renderAtDisplaySize` is
-set to `true`, if the canvas size is lower than the frame size, it will use
+The `present frame` function gets the frame selected to be rendered. The canvas size 
+is changed to match the frame size. If `renderAtDisplaySize` is
+set to `true` and the canvas size is smaller than the frame size, it will use
 the width of the canvas size and it will calculate the height using the
-aspect ratio of the frame. This is done to reduce the GPU performance so we
-don't do supersampling.
+aspect ratio of the frame. This is done to improve the GPU performance and avoid supersampling.
 
 Finally, call [render to screen](renderer.md#RenderToScreen) so the Renderer
-display the frame at the canvas.
+displays the frame on the canvas.
 
-This function can be call passing a frame and it will use that one instead
+This function can be called when passing a frame and it will use that frame instead of
 the one that is selected to be displayed.
