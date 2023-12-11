@@ -31,4 +31,4 @@ be in two segments if the start time is in one and the end time in
 another.
 
 If the residual is a key frame, the group index is added to the key frames
-index of the segment.
+array of the segment.
