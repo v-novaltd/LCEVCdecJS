@@ -20,8 +20,11 @@ the following diagram we can see what the loop does in the right branch:
 ![alt text](assets/video_flow.png "Video flow")
 
 If `videoFrameCallback` is not present in the browser, we get a new frame
-from the video. When this happens, the queue is updated and the next frame
-selected. Afterwards the video controls, stats and DPS are updated.
+from the video. Upon receiving a new frame, the queue is updated
+to collect all frames whos presentation time has passed. The current
+frame is kept, as it may still be on screen. The frame that has been
+selected when updating the queue will be presented. Afterwards
+the video controls, stats and DPS are updated.
 
 Finally, `requestAnimationFrame` is used again to call the same function.
 
