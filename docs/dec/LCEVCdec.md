@@ -54,7 +54,7 @@ Some video events are listed in order to mimic the native player. These are:
   * If poster frame is enabled, render it.
 * play:
   * If it is the first time, enable queue rendering.
-  * Reset the presentation time at the queue.
+  * Reset the presentation time in the Queue class.
   * Refresh the video control icons.
 * pause:
   * Reset the presentation time at the queue.
