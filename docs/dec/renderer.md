@@ -21,7 +21,7 @@ WebGL on the canvas.
 
 The other ways of rendering a frame are generally equivalent. In order to merge
 with LCEVC data, all of them have to convert the video texture to YUV, after which 
-it needs to be converted back again to RBG.
+it needs to be converted back again to RGB.
 
 ## Render to screen
 
