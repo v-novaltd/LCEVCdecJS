@@ -57,7 +57,7 @@ Some video events are listed in order to mimic the native player. These are:
   * Reset the presentation time in the Queue class.
   * Refresh the video control icons.
 * pause:
-  * Reset the presentation time at the queue.
+  * Reset the presentation time in the Queue class.
   * Refresh the video control icons.
 * seeked:
   * If the queue rendering is disabled, enable it to show the right frame.
