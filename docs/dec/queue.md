@@ -30,7 +30,7 @@ explained in depth at [the renderer document](renderer.md#PresentFrame)
 
 Before presenting a frame `update queue` needs to be called. This function
 selects the next frame from the queue to be presented when the `present frame` 
-function is called. The 'update queue' function will also reset and set for reuse 
+function is called. The `update queue` function will also reset and set for reuse 
 the old or no longer needed frames.
 
 In the next diagram we can see steps done by the function:
