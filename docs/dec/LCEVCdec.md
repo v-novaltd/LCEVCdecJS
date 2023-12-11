@@ -62,7 +62,7 @@ Some video events are listed in order to mimic the native player. These are:
 * seeked:
   * If the queue rendering is disabled, enable it to show the right frame.
   * Reset the queue.
-  * If the last frame had LCEVC, clear the temporal for not show wrong
+  * If the last frame had LCEVC, clear the temporal to avoid showing wrong
     residuals.
   * If video is paused, force a new frame to be added to the queue. This is done
     because `videoFrameCallback` is asynchronous and can be called before this
