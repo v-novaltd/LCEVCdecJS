@@ -11,20 +11,16 @@ Only supported on browsers with [Media Source Extensions](https://caniuse.com/?s
 
 ## Player Integration 
 
-This project is designed to work alongside an existing player rather than on its own. Since LCEVC works as an enhancement to existing codecs it works in tandem with decoders for those formats. 
+This project is designed to work alongside any existing web player rather than on its own. Since LCEVC works as an enhancement to existing codecs it works in tandem with decoders for those formats. Within web environments, the native system decoders are typically used to decode the base video codec as an input to LCEVCdecJS to provide the LCEVC enhancement decode and rendering. 
 
-Barebones implementation may be accomplished using [Media Source Extensions](https://developer.mozilla.org/en-US/docs/Web/API/MediaSource), however, we recommend using an officially supported player, such as the [Shaka Player](https://github.com/shaka-project/shaka-player) for ease of use. 
-## Demos 
-- [LCEVC integration with Shaka Player project]( https://shaka-player-demo.appspot.com/demo/#panel=ALL_CONTENT;panelData=LCEVC;build=uncompiled)  
-
+Simple LCEVC-enhanced player implementations may also be accomplished by directly using [Media Source Extensions](https://developer.mozilla.org/en-US/docs/Web/API/MediaSource). 
 
 ## Shaka Player Integration 
 
 LCEVC decoding support is included within the Shaka Player project from version 4.3 onwards. Therefore, if you are building Shaka Player, LCEVC support can be easily enabled by including this project and using `player.configure('lcevc.enabled', true);`. Please visit the [Shaka Player](Shaka-Player) project for more details. 
 
-## Custom Player Integration 
-
-We aim to support as many different players as possible. Please [contact us](https://www.v-nova.com/) if you would like to add LCEVC support to your player. 
+## Demos 
+- [LCEVC integration with Shaka Player project]( https://shaka-player-demo.appspot.com/demo/#panel=ALL_CONTENT;panelData=LCEVC;build=uncompiled)  
 
 ## Building & Getting Started
 
