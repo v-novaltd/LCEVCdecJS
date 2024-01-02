@@ -1,4 +1,4 @@
-/* Copyright (c) V-Nova International Limited 2022. All rights reserved. */
+/* Copyright (c) V-Nova International Limited 2021-2024. All rights reserved. */
 
 var Module = {}; // eslint-disable-line no-var
 if (!Module)

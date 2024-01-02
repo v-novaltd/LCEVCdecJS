@@ -1,5 +1,5 @@
 /* eslint-disable max-len */
-/* Copyright (c) V-Nova International Limited 2021. All rights reserved. */
+/* Copyright (c) V-Nova International Limited 2021-2024. All rights reserved. */
 
 import DemuxerWorker from 'web-worker:./demux/demuxer_worker.js'; // eslint-disable-line
 import {
