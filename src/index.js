@@ -1,4 +1,4 @@
-/* Copyright (c) V-Nova International Limited 2021. All rights reserved. */
+/* Copyright (c) V-Nova International Limited 2021-2024. All rights reserved. */
 
 import LCEVC from './lcevc_dec';
 import { Events } from './globals/enums';

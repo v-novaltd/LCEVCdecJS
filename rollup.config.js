@@ -1,9 +1,9 @@
 import fs from 'fs';
 import path from 'path';
 import typescript from '@rollup/plugin-typescript';
-import { terser } from "rollup-plugin-terser";
+import { terser } from 'rollup-plugin-terser';
 import webWorkerLoader from 'rollup-plugin-web-worker-loader';
-import execute from "rollup-plugin-shell";
+import execute from 'rollup-plugin-shell';
 import { babel } from '@rollup/plugin-babel';
 import eslint from '@rollup/plugin-eslint';
 import replace from '@rollup/plugin-replace';
@@ -17,7 +17,7 @@ console.log(`Building a ${production ? 'production' : 'development'} bundle`);
 
 // Create the output directory if it does not exist yet, needed for writePackageInfo
 const outputDirectory = './dist';
-if (!fs.existsSync(outputDirectory)){
+if (!fs.existsSync(outputDirectory)) {
   fs.mkdirSync(outputDirectory);
 }
 
@@ -30,8 +30,8 @@ packageInfo.writePackageInfo(
 // Write shaders into an automatically generated file shaders_src.js
 const shadersDirectory = './shaders/';
 const shadersOutput = './src/shaders/shaders_src.js';
-const licenseText = '/* Copyright (c) V-Nova International Limited 2021. All rights reserved. */';
-shaders.writeShaders(shadersDirectory, shadersOutput, licenseText);
+const license = '/* Copyright (c) V-Nova International Limited 2021-2024. All rights reserved. */';
+shaders.writeShaders(shadersDirectory, shadersOutput, license);
 
 // Rollup.js config
 export default {

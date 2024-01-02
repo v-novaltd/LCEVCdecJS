@@ -1,4 +1,4 @@
-/* Copyright (c) V-Nova International Limited 2021. All rights reserved. */
+/* Copyright (c) V-Nova International Limited 2021-2024. All rights reserved. */
 
 /**
  * The profile class holds the information of a colorspace profile.

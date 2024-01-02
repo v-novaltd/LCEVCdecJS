@@ -1,4 +1,4 @@
-/* Copyright (c) V-Nova International Limited 2021. All rights reserved. */
+/* Copyright (c) V-Nova International Limited 2021-2024. All rights reserved. */
 
 const assetBaseUrl = `https://d3mfda3gpj3dw1.cloudfront.net/svg/`;
 
