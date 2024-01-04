@@ -46,6 +46,6 @@ Detailed documentation is available for the different parts of LCEVCdecJS:
 
 ## License
 
-Copyright © V-Nova International Limited 2024
+Copyright (c) V-Nova International Limited 2021-2024. All rights reserved.
 
 This software is protected by copyrights and other intellectual property rights and no license is granted to any such rights. If you would like to obtain a license to compile, distribute, or make any other use of this software, please contact V-Nova Limited info@v-nova.com.
