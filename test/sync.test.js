@@ -1,9 +1,9 @@
 /* global shaka */
 
 const manifests = {
-  FMP4_HLS: 'https://dyctis843rxh5.cloudfront.net/vnQf3PXxVLuXohrr/master.m3u8',
-  FMP4_DASH: 'https://dyctis843rxh5.cloudfront.net/vnQf3PXxVLuXohrr/master.mpd',
-  TS_HLS: 'https://dyctis843rxh5.cloudfront.net/vnIPjhbcfnThQdZl/master.m3u8'
+  FMP4_HLS: 'https://dyctis843rxh5.cloudfront.net/vnr4up99Z6W4vgUK/master.m3u8',
+  FMP4_DASH: 'https://dyctis843rxh5.cloudfront.net/vnr4up99Z6W4vgUK/master.mpd',
+  TS_HLS: 'https://dyctis843rxh5.cloudfront.net/vn5faZlpuPjsA1Lq/master.m3u8'
 };
 
 const TIMEOUT = 60000; // 60 seconds
