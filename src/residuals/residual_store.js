@@ -139,7 +139,6 @@ class ResidualStore {
                 segment.groupKeys.splice(j, 1);
                 delete segment.groups[groupKey];
                 j -= 1;
-                continue; // eslint-disable-line
               }
             }
 
@@ -155,7 +154,6 @@ class ResidualStore {
               segment.groupKeys.splice(j, 1);
               delete segment.groups[groupKey];
               j -= 1;
-              continue; // eslint-disable-line
             }
           }
 
@@ -583,7 +581,6 @@ class ResidualStore {
       // Check keyframes.
       if (segment && segment.keyframes.length > 0) {
         let groupIndex = _binaryPositionSearch(segment.keyframes, timeindex) - 1;
-        // TODO: Change this to not do this check.
         if (groupIndex === -1 && segment.groupKeys[groupIndex + 1] >= timeindex) {
           groupIndex = 0;
         }

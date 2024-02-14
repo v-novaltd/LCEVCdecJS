@@ -85,10 +85,10 @@ const LCEVCdecDefaultConfig: LCEVCdecConfig = {
  */
 function mergeConfigurations(config) {
   const mergedConfig = { ...LCEVCdecDefaultConfig, ...config };
-  if (!(typeof config.dynamicPerformanceScaling === 'undefined')) {
+  if (typeof config.dynamicPerformanceScaling !== 'undefined') {
     mergedConfig.dps = config.dynamicPerformanceScaling;
   }
-  if (!(typeof config.drawLogo === 'undefined')) {
+  if (typeof config.drawLogo !== 'undefined') {
     mergedConfig.logo = config.drawLogo;
   }
   mergedConfig.playerControls = {

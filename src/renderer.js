@@ -3,10 +3,13 @@
 import {
   _createFBO,
   _deleteFBO,
-  _useProgramAndLog,
-  FBO // eslint-disable-line
+  _useProgramAndLog
 } from './graphics/webgl';
 import { Result } from './globals/enums';
+
+/**
+ * @typedef {import('./graphics/webgl').FBO} FBO
+ */
 
 /**
  * The Renderer class is in charge of rendering frames and presenting to the
@@ -426,8 +429,6 @@ class Renderer {
     this.#gl.uniform2f(uniforms.outputSize, displayWidth, displayHeight);
 
     // Dithering
-    // const ditherX = 512 * Math.random() >> 0;
-    // const ditherY = 512 * Math.random() >> 0;
     const ditherX = (0b1000000000000000000 * seed >> 0) & 0b111111111;
     const ditherY = (0b1000000000000000000 * seed >> 9) & 0b111111111;
     this.#gl.uniform3f(uniforms.dithering, ditherX, ditherY, ditherStrength);

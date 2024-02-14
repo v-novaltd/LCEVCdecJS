@@ -13,7 +13,7 @@ const writePackageInfo = (templatePath, outputPath) => {
     console.error(err);
   }
 
-  const now = new Date().toISOString().substr(0, 10);
+  const now = new Date().toISOString().slice(0, 10);
 
   packageInfoText = packageInfoText.replace(/{{pkg_name}}/g, packageJson.name);
   packageInfoText = packageInfoText.replace(/{{date}}/g, now);

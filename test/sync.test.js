@@ -11,6 +11,7 @@ let video;
 let canvas;
 
 const seekTimestamps = [1.8, 1.95, 2.1, 2.25, 2.4, 2.55, 2.7, 2.85, 3, 3.15, 3.3];
+const seekTimestampsReverse = [...seekTimestamps].reverse();
 
 const uniqueFrameCount = 21;
 const baseCoordOffset = 35;
@@ -312,7 +313,7 @@ describe('Residual Synchronisation', () => {
 
   it('| Shaka Player | HLS Manifest | fMP4 | 1920x1080 | 30fps | Seek Backward |', async () => {
     await loadShakaPlayer(video, canvas, manifests.FMP4_HLS);
-    await residualSyncSeekTest(video, seekTimestamps.reverse());
+    await residualSyncSeekTest(video, seekTimestampsReverse);
   }, TIMEOUT);
 
   xit('| Shaka Player | HLS Manifest | fMP4 | 1920x1080 | 30fps | Seek Random |', async () => {
@@ -334,7 +335,7 @@ describe('Residual Synchronisation', () => {
 
   it('| Shaka Player | DASH Manifest | fMP4 | 1920x1080 | 30fps | Seek Backward |', async () => {
     await loadShakaPlayer(video, canvas, manifests.FMP4_DASH);
-    await residualSyncSeekTest(video, seekTimestamps.reverse());
+    await residualSyncSeekTest(video, seekTimestampsReverse);
   }, TIMEOUT);
 
   xit('| Shaka Player | DASH Manifest | fMP4 | 1920x1080 | 30fps | Seek Random |', async () => {
@@ -356,7 +357,7 @@ describe('Residual Synchronisation', () => {
 
   it('| Shaka Player | HLS Manifest | TS | 1920x1080 | 30fps | Seek Backward |', async () => {
     await loadShakaPlayer(video, canvas, manifests.TS_HLS);
-    await residualSyncSeekTest(video, seekTimestamps.reverse());
+    await residualSyncSeekTest(video, seekTimestampsReverse);
   }, TIMEOUT);
 
   xit('| Shaka Player | HLS Manifest | TS | 1920x1080 | 30fps | Seek Random |', async () => {

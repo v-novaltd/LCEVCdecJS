@@ -169,55 +169,84 @@ class Demuxer {
   */
   #onEbmlData(sample) {
     this.#previousSampleCount = 0;
-    if (sample.length > 1) {
-      const sampleName = sample[1].name;
-      if (sampleName === 'Timecode'
-      || sampleName === 'TimecodeScale'
-      || sampleName === 'Block'
-      || sampleName === 'BlockAddID'
-      || sampleName === 'BlockAdditional') {
-        if (sampleName === 'TimecodeScale') {
-          this.#webmTimeScale = sample[1].value / 1000;
-        }
-        if (sampleName === 'Timecode') {
-          this.#webmTimecodeOffset = sample[1].value * 1;
-        }
 
-        if (sampleName === 'BlockAddID') {
-          this.#webmBlockAddId = sample[1].data[0];
-        }
+    if (sample.length <= 1) {
+      return;
+    }
 
-        if (sampleName === 'Block') {
-          this.#webmTimecode = this.#webmTimecodeOffset + (sample[1].value * 1);
-          this.#webmDuration = sample[1].value - this.#webmBlockDuration;
-          this.#webmBlockDuration = sample[1].value;
-        }
-        if (sampleName === 'BlockAdditional') {
-          if (this.#baseMediaDecodeTime !== this.#prevTimeStampOffset) {
-            this.#previousSampleCount = 0;
-          }
-          if (this.#timeStampOffsetFound) {
-            // eslint-disable-next-line no-param-reassign
-            const dts = this.#baseMediaDecodeTime + this.#previousSampleCount
-            * this.#webmBlockDuration;
-            // eslint-disable-next-line no-param-reassign
-            this.#webmTimecode = this.#baseMediaDecodeTime
-              + this.#webmTimecode - dts + this.#previousSampleCount * this.#webmBlockDuration;
-          }
+    const sampleName = sample[1].name;
 
-          const frameSample = [
-            this.#webmTimecode,
-            this.#webmTimeScale,
-            this.#webmDuration,
-            this.#baseMediaDecodeTime,
-            true,
-            1
-          ];
-          this.#findAndStoreLcevcDataWebm(sample[1].data, frameSample, this.#level);
-          this.#prevTimeStampOffset = this.#baseMediaDecodeTime;
+    const handleTimecodeScale = () => {
+      this.#webmTimeScale = sample[1].value / 1000;
+    };
 
-          Log.debug(`Base Media Decode Time: ${this.#baseMediaDecodeTime}`);
-        }
+    const handleTimecode = () => {
+      this.#webmTimecodeOffset = sample[1].value * 1;
+    };
+
+    const handleBlockAddID = () => {
+      this.#webmBlockAddId = sample[1].data[0];
+    };
+
+    const handleBlock = () => {
+      this.#webmTimecode = this.#webmTimecodeOffset + (sample[1].value * 1);
+      this.#webmDuration = sample[1].value - this.#webmBlockDuration;
+      this.#webmBlockDuration = sample[1].value;
+    };
+
+    const handleBlockAdditional = () => {
+      if (this.#baseMediaDecodeTime !== this.#prevTimeStampOffset) {
+        this.#previousSampleCount = 0;
+      }
+
+      if (this.#timeStampOffsetFound) {
+        const dts = this.#baseMediaDecodeTime + this.#previousSampleCount * this.#webmBlockDuration;
+        this.#webmTimecode = this.#baseMediaDecodeTime
+          + this.#webmTimecode - dts + this.#previousSampleCount * this.#webmBlockDuration;
+      }
+
+      const frameSample = [
+        this.#webmTimecode,
+        this.#webmTimeScale,
+        this.#webmDuration,
+        this.#baseMediaDecodeTime,
+        false,
+        1
+      ];
+
+      this.#findAndStoreLcevcDataWebm(sample[1].data, frameSample, this.#level);
+      this.#prevTimeStampOffset = this.#baseMediaDecodeTime;
+
+      Log.debug(`Base Media Decode Time: ${this.#baseMediaDecodeTime}`);
+    };
+
+    const validSampleNames = [
+      'Timecode',
+      'TimecodeScale',
+      'Block',
+      'BlockAddID',
+      'BlockAdditional'
+    ];
+
+    if (validSampleNames.includes(sampleName)) {
+      switch (sampleName) {
+        case 'TimecodeScale':
+          handleTimecodeScale();
+          break;
+        case 'Timecode':
+          handleTimecode();
+          break;
+        case 'BlockAddID':
+          handleBlockAddID();
+          break;
+        case 'Block':
+          handleBlock();
+          break;
+        case 'BlockAdditional':
+          handleBlockAdditional();
+          break;
+        default:
+          Log.debug('Skipping Sample');
       }
     }
   }
@@ -286,7 +315,6 @@ class Demuxer {
         let i = 0;
         let duration = 0;
 
-        // TODO: i can go out of the array bounds.
         do {
           if (samples[i]) {
             ({ duration } = samples[i]);
@@ -518,7 +546,6 @@ class Demuxer {
       // Read the SEI Payload Size.
       do {
         seiLength += frame[i];
-        // i += 1;
       } while (frame[i++] === 0xff); // eslint-disable-line
 
       if (
@@ -581,15 +608,16 @@ class Demuxer {
    * for VP8,VP9 and AV1 blocks
    *
    * @param {ArrayBuffer} frame
-   * @param {object} frameSample
+   * @param {object} frameSampleIn
    * @param {number} levelVar
    * @returns {boolean} True if lcevc data was found else false.
    * @memberof Demuxer
    * @private
    */
-  #findAndStoreLcevcDataWebm(frame, frameSample, levelVar) {
+  #findAndStoreLcevcDataWebm(frame, frameSampleIn, levelVar) {
     let foundType = 0; // 0: not found, 1: unregistered, 2: registered.
 
+    const frameSample = frameSampleIn;
     const frameSize = frame.length;
     if (this.#webmBlockAddId === 5) {
       for (let i = 0; i < frameSize; i += 1) {
@@ -598,6 +626,29 @@ class Demuxer {
           && frame[i + 2] === 0x01
           && (frame[i + 3] === 0x79
           || frame[i + 3] === 0x7B)) {
+          /*
+          NAL Header structure for WebM data
+          |0|1|2|3|4|5|6|7|0|1|2|3|4|5|6|7|
+          |F|F|NALType  |Reserved         |
+
+          According to LCEVC spec:
+          1. F are forbidden bits.
+          2. NALType contains type of RBSP data structure contained in the NAL unit.
+          3. Reserved are reserved bits and should be 1.
+
+          In WebM, NALType = 28 represents non-IDR segment (not a keyframe).
+          NALType = 29 represents IDR segment (keyframe).
+
+          With these conditions, if the value immediately after a header sequence of 0x000001 is
+          equal to 0x7B (decimal 123), this is an IDR segment. Alternatively, if 0x79 (decimal 121)
+          this is a non-IDR segment.
+
+          Although it seems that not every IDR segment results in a successful parse. When decoding,
+          dpi.js accounts for this when parsing from a keyframe.
+          */
+
+          // value of true signals an IDR segment (keyframe) for the decoder
+          frameSample[4] = frame[i + 3] === 0x7B;
           foundType = 2;
           break;
         }

@@ -81,7 +81,7 @@ class QueueFrame {
     /** @type {boolean} */
     this.rendered = false;
 
-    // Used for anything that requires randomness, such as noise.
+    // Used for anything that requires randomness, such as noise - Used for dithering.
     /** @type {number} */
     this.randomSeed = Math.random();
 

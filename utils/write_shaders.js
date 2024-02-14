@@ -10,7 +10,8 @@ const writeShaders = (shadersDirectory, shadersOutput, licenseText) => {
   const now = new Date();
   text += licenseText + br + br;
   text += `// shader source file automatically built on ${
-    now.toISOString().substr(0, 10)}${br}${br}`;
+    now.toISOString().slice(0, 10)}${br}${br}`;
+
   text += `const shadersrc = {};${br}${br}`;
 
   const shaderExtensions = /.*.+(frag|vert|glsl|gl)$/;
@@ -32,7 +33,7 @@ const writeShaders = (shadersDirectory, shadersOutput, licenseText) => {
     filetext = filetext
       .replace(/\/\*[^]*?\*\//g, '') // strip multiline comments
       .replace(/\/\/[^\n]*/g, '') // strip single line comments
-      .replace(/\n[\n\t\s]*/g, '\n') // double blank lines
+      .replace(/\n[\s]*/g, '\n') // double blank lines
       .replace(/[ \t]+/g, ' ') // double spaces
       .trim();
     // write

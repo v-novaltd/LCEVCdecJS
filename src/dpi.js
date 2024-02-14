@@ -10,14 +10,17 @@ import {
   _createShader,
   _deleteShader,
   _deleteTexture,
-  _useProgramAndLog,
-  ShaderObj, // eslint-disable-line
-  FBO, // eslint-disable-line
+  _useProgramAndLog
 } from './graphics/webgl';
 import {
   _createHeapData, _createDataPointer, _freeHeapData, _freeDataPointer
 } from './helpers';
 import { shaderNames } from './shaders/shaders_src';
+
+/**
+ * @typedef {import('./graphics/webgl').FBO} FBO
+ * @typedef {import('./graphics/webgl').ShaderObj} ShaderObj
+ */
 
 /**
  * The DPI class holds all the decoder related stuff.
@@ -1020,6 +1023,20 @@ class DPI {
       do {
         if (groupNext.level === -1 || groupNext.level === this.#lcevcDec.currentLevel || force) {
           result = this._parseLcevcDataItem(groupNext.pssData);
+
+          // Account for WebM contents not having accurate keyframes. It seems that not every
+          // IDR segment (keyframe) results in a successful parse, as such, we iterate backwards
+          // through available keyframes until one of them returns a succesful result. This issue
+          // occurs on profile switch, when we attempt to parse from keyframe for a new profile.
+          if (result.flags.parse !== 0) {
+            let groupPrev = groupNext;
+            while (result.flags.parse !== 0 && groupPrev) {
+              groupPrev = residualStore._getPreviousGroups(groupPrev, 1)[0];
+              if (!groupPrev) break;
+              result = this._parseLcevcDataItem(groupPrev.pssData);
+            }
+            groupNext = groupPrev;
+          }
           parseLog.push(groupNext);
 
           if (result.flags.parse !== 0) break;

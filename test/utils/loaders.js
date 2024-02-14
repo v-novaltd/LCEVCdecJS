@@ -1,8 +1,9 @@
 /**
  * Load the file at the given url as an ArrayBuffer
  *
+ * @async
  * @param {string} url the url of the file to load
- * @returns {ArrayBuffer} the loaded ArrayBuffer
+ * @returns {Promise<ArrayBuffer>} the loaded ArrayBuffer
  */
 async function loadToBuffer(url) {
   const data = await fetch(url);
@@ -14,8 +15,9 @@ async function loadToBuffer(url) {
 /**
  * Load the file at the given url and inject it into a script tag on the webpage
  *
+ * @async
  * @param {string} url the url of the file to load
- * @returns {Element} the injected script Element (DOMElement)
+ * @returns {Promise<Element>} the injected script Element (DOMElement)
  */
 async function loadToScriptTag(url) {
   const data = await fetch(url);

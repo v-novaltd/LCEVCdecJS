@@ -12,7 +12,7 @@ class Supports {
 
     #webGLSupport = false;
 
-    #mediasourceSupport = false;
+    #mediasourceSupport = true;
 
     #Error = false;
 
@@ -37,7 +37,7 @@ class Supports {
       this.#webGLSupport = false;
 
       /** @type {boolean} */
-      this.#mediasourceSupport = false;
+      this.#mediasourceSupport = true;
 
       /** @type {string} */
       this.#Error = '';
@@ -130,20 +130,11 @@ class Supports {
      * @memberof Supports
      */
     get mediasourceSupport() {
-      if (!window.MediaSource) {
-        this.#mediasourceSupport = false;
-        this.#Error = 'LCEVC Error: MediaSource Extensions are not supported for this Browser.';
-        return false;
-      }
-
-      // Some very old MediaSource implementations didn't have isTypeSupported.
-      if (!MediaSource.isTypeSupported) {
-        this.#mediasourceSupport = false;
-        this.#Error = 'LCEVC Error: MediaSource Extensions are not supported for this Browser.';
-
-        return false;
-      }
-
+      // This was put in to make sure that these run in browsers with MSE/MME support.
+      // But infact we do not use MSE/MME APIs directly in the library also the scope
+      // of the library has extended to non-MSE/non-MME use cases Eg:WebRTC workflow.
+      // So the logic for this is removed but kept the function as placeholder
+      // if any restrictions come up in the future regarding MSE/MME.
       this.#mediasourceSupport = true;
       return true;
     }
@@ -235,7 +226,6 @@ if (osSupport
   support = true;
   error = 'No Errors';
 } else {
-  support = false;
   error = SupportObject.Error;
   if (!webAssemblySupport()) {
     error = 'LCEVC Error: WebAssembly Verification failed is not supported!';

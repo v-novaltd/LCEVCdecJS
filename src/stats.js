@@ -8,12 +8,15 @@ import {
   _createBDO,
   _deleteShader,
   _deleteFBO,
-  _deleteBDO,
-  FBO, // eslint-disable-line
-  ShaderObj, // eslint-disable-line
-  BDO // eslint-disable-line
+  _deleteBDO
 } from './graphics/webgl';
 import { Result } from './globals/enums';
+
+/**
+ * @typedef {import('./graphics/webgl').FBO} FBO
+ * @typedef {import('./graphics/webgl').ShaderObj} ShaderObj
+ * @typedef {import('./graphics/webgl').BDO} BDO
+ */
 
 /**
  *
@@ -455,7 +458,6 @@ class Stats {
       let qtext = '';
       let rtext = '';
 
-      // TODO: Use a Heap.
       // Sort by time (does NOT change original array).
       let maxMediaTime = 0;
       const ref = [];
@@ -466,7 +468,7 @@ class Stats {
           maxMediaTime = Math.max(maxMediaTime, queueFrame.mediaTime);
         }
       }
-      ref.sort(function(a, b){ return a[1] < b[1] ? -1 : a[1] > b[1] ? 1 : 0 }); // eslint-disable-line
+      ref.sort((a, b) => a[1] - b[1]);
 
       // loop through sorted reference
       for (let j = 0; j < ref.length; j += 1) {
@@ -496,7 +498,7 @@ class Stats {
           ftext += br;
 
           // get residual info for this
-          const segmentSize = 1; // assumes it is 1. maybe wrong. TODO - make segmentSize public
+          const segmentSize = 1; // assumes it is 1.
           const segmentIndex = Math.floor(queueFrame.mediaTime / segmentSize);
           const segment = residualStore._getSegment(segmentIndex);
           if (!segment) {
@@ -1018,7 +1020,9 @@ class Stats {
    * @private
    */
   static #colHex(hex) {
-    return `#${(`000000${hex.toString(16)}`).substr(-6)}`;
+    const paddedColor = `000000${hex.toString(16)}`;
+    const formattedColor = paddedColor.slice(-6);
+    return `#${formattedColor}`;
   }
 
   /**
@@ -1066,7 +1070,7 @@ class Stats {
     bdo = this.#barDataBDO;
 
     // Raw data.
-    let t0 = 0;
+    const t0 = 0;
     let t1 = t0 + uploadBase;
     let t2 = t1 + decodeResidual;
     let t3 = t2 + uploadResidual;
@@ -1097,7 +1101,6 @@ class Stats {
     this.#avUploadResidual = uploadResidual * (1 - mf) + this.#avUploadResidual * mf;
     this.#avRenderShader = renderShader * (1 - mf) + this.#avRenderShader * mf;
 
-    t0 = 0;
     t1 = t0 + this.#avUploadBase;
     t2 = t1 + this.#avDecodeResidual;
     t3 = t2 + this.#avUploadResidual;

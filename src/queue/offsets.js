@@ -51,8 +51,8 @@ class Offsets {
      * @memberof Offsets
      */
     getOffsets(containerFormat, isLive, fps) {
-      let play = 0;
-      let seek = 0;
+      let play;
+      let seek;
       let bypass = true;
       const frameDuration = 1.0 / fps;
       if (this.#browser === Browser.CHROME) {
@@ -176,8 +176,8 @@ class Offsets {
       }
 
       this.#residualOffsets.bypass = bypass;
-      this.#residualOffsets.seek = seek;
-      this.#residualOffsets.play = play;
+      this.#residualOffsets.seek = seek || 0;
+      this.#residualOffsets.play = play || 0;
       this.#residualOffsets.fpsReceived = Number.isFinite(fps);
 
       return this.#residualOffsets;

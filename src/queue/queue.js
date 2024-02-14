@@ -387,6 +387,7 @@ class Queue {
           && !this.#lcevcDec.isLcevcPresentlyDecoded)
       ) {
         if (!decoder._getrefreshDpi) {
+          this.#lcevcDec.useTimestampOffsetForNextProfile();
           this.#lcevcDec.setCurrentLevelBufferSwitch();
           decoder._refreshDpi();
         }
@@ -756,6 +757,7 @@ class Queue {
     queueFrame.timingStats.renderShader = timingRender1 - timingRender0;
 
     queueFrame.available = false;
+    // Random seed is used to generate dither for this queueframe.
     queueFrame.randomSeed = Math.abs(Math.sin(queueFrame.mediaTime)) % 1;
 
     // Calculate the audio delay by keeping track of the time it took to render the previous N
@@ -949,8 +951,6 @@ class Queue {
 
   /**
    * Reset the entire queue.
-   *
-   * TODO: Delete the QueueFrames.
    *
    * @returns {Result} The status code.
    * @memberof Queue
