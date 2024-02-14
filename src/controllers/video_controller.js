@@ -9,10 +9,13 @@ import {
   _createShader,
   _createTexture,
   _deleteShader,
-  _deleteTexture,
-  ShaderObj // eslint-disable-line
+  _deleteTexture
 } from '../graphics/webgl';
 import { Log } from '../log.ts';
+
+/**
+ * @typedef {import('../graphics/webgl').ShaderObj} ShaderObj
+ */
 
 /** @constant @type {number} */
 const ICON_SIZE = 32;
@@ -704,6 +707,7 @@ class VideoControls {
         mouseDown = true;
         break;
       case 'mouseout':
+      case 'touchend':
         this.#mouseX = -1;
         this.#mouseY = -1;
         break;
@@ -711,10 +715,6 @@ class VideoControls {
         this.#mouseX = e.touches[0].offsetX;
         this.#mouseY = e.touches[0].offsetY;
         mouseDown = true;
-        break;
-      case 'touchend':
-        this.#mouseX = -1;
-        this.#mouseY = -1;
         break;
       default:
         break;
@@ -1188,8 +1188,10 @@ class VideoControls {
       const canvas = this.#canvasControls;
       const obj = this.#elemFullscreen || canvas.parentElement;
       this.#closeFullscreen(obj);
-      const event = document.createEvent('HTMLEvents');
-      event.initEvent('resize', true, true);
+      const event = new Event('resize', {
+        bubbles: true,
+        cancelable: true
+      });
       event.eventName = 'resize';
       window.dispatchEvent(event);
     } else {

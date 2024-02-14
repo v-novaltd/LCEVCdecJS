@@ -14,12 +14,12 @@ import ResidualStore from './residuals/residual_store';
 import Stats from './stats';
 import VideoControls from './controllers/video_controller';
 import VisibilityController from './controllers/visibility_controller';
-import QueueFrame from './queue/queue_frame'; // eslint-disable-line no-unused-vars
 import { _binaryPositionSearch } from './algorithms/binary_position_search.ts';
 import { lcevcImg } from './controllers/lcevc_assets.ts';
 import { _deleteFBO } from './graphics/webgl';
 import { mergeConfigurations } from './config.ts';
 import EnvironmentUtils from './utils/environment_utils';
+import Fullscreen from './fullscreen/fullscreen';
 
 const PERFORMANCE_MIN_COUNT = 300;
 const PERFORMANCE_SCALE_FACTOR = 2;
@@ -122,6 +122,9 @@ class LCEVCdec {
 
   /** @private @type {boolean} */
   #timestampOffsetReceived = false;
+
+  /** @private @type {number} */
+  #timestampOffsetForNextProfile = 0.0;
 
   /** @private @type {bool} */
   #rtpTimestampSync = false;
@@ -248,6 +251,9 @@ class LCEVCdec {
   /** @private @type {number} */
   #previousLevel = -1;
 
+  /** @private @type {object} */
+  #fullscreenUtils = null;
+
   /**
    * Construct the LCEVCdec object.
    *
@@ -261,7 +267,7 @@ class LCEVCdec {
     if (!document.getElementById('lcevc-styles')) {
       const style = document.createElement('style');
       style.id = 'lcevc-styles';
-      style.type = 'text/css';
+      style.setAttribute('type', 'text/css');
       style.innerHTML = `
       /* debug tools */
       #lcevc-stats-infobox,
@@ -470,6 +476,7 @@ class LCEVCdec {
     this.#queue = new Queue(this, gl);
     this.#residualStore = new ResidualStore(this);
     this.#renderer = new Renderer(gl);
+    this.#fullscreenUtils = new Fullscreen(this);
 
     this.#browserDetection();
 
@@ -859,6 +866,18 @@ class LCEVCdec {
   }
 
   /**
+   * If called, we signal that a profile was switched,
+   * and apply the new timestampOffset associated with that profile
+   * that was passed in appendBuffer.
+   *
+   * @memberof LCEVCdec
+   * @exports
+   */
+  useTimestampOffsetForNextProfile() {
+    this.setTimestampOffset(this.#timestampOffsetForNextProfile);
+  }
+
+  /**
    * Get the value of the option of the lcevc configuration.
    *
    * @param {!string} option The name of the option.
@@ -1215,11 +1234,7 @@ class LCEVCdec {
       }
 
       this.#lastCurrentTime = video.currentTime;
-      if (this.#videoFrameCallbackEnabled) {
-        this.#loopAnimationId = window.requestAnimationFrame(
-          this.#loopUpdate.bind(this)
-        );
-      } else if (this.#queue._recentFrameRate === 0) {
+      if (this.#videoFrameCallbackEnabled || this.#queue._recentFrameRate === 0) {
         this.#loopAnimationId = window.requestAnimationFrame(
           this.#loopUpdate.bind(this)
         );
@@ -1620,7 +1635,16 @@ class LCEVCdec {
       } else {
         this.#resizeFullScreenCanvas('auto', fullscreenElement.clientWidth / frameAspectRatio, `${(fullscreenElement.clientWidth - this.#canvas.width) / 2}px`, 'left');
       }
+      // Incase of fullscreen sometimes due to 1D contents the fullscreen aspect ratio goes weird with the resolution,
+      // To fix this we need to have a logic to hide the video tag when the canvas is visible and bring it back on fullscreen exit.
+      const style = window.getComputedStyle(this.#canvas);
+      if (style.display === 'block') {
+        this.#video.style.display = 'none';
+      } else {
+        this.#video.style.display = 'block';
+      }
     } else {
+      this.#video.style.display = 'block';
       this.#canvas.style.width = '100%';
       this.#canvas.style.height = '100%';
     }
@@ -1960,10 +1984,14 @@ class LCEVCdec {
       throw new TypeError('The passed argument is not of type: ArrayBuffer');
     }
 
-    if (!this.#timestampOffsetReceived || level !== this.#previousLevel) {
+    if (!this.#timestampOffsetReceived) {
       this.#timestampOffsetReceived = true;
-      this.#previousLevel = level;
       this.setTimestampOffset(timestampOffset);
+    }
+
+    if (level !== this.#previousLevel) {
+      this.#previousLevel = level;
+      this.#timestampOffsetForNextProfile = timestampOffset;
     }
 
     const dataToWorker = new Uint8Array(data).slice();
@@ -2578,6 +2606,65 @@ class LCEVCdec {
     this.#events[type].forEach(fireCallbacks);
 
     return Result.OK;
+  }
+
+  /**
+   * Returns a boolean indicating if fullscreen is supported
+   * for the provided element in webkit (iOS) browsers.
+   *
+   * @memberof LCEVCdec
+   * @param {HTMLDivElement} fullScreenElement element to be checked
+   * @returns {boolean} true if fullscreen is supported
+   * @public
+   */
+  webkitSupportsFullscreen(fullScreenElement) {
+    return this.#fullscreenUtils.webkitSupportsFullscreen(fullScreenElement);
+  }
+
+  /**
+   * Enter fullscreen on a webkit (iOS) browser for a div tag.
+   *
+   * @memberof LCEVCdec
+   * @param {HTMLDivElement} fullScreenElement element to be displayed in fullscreen
+   * @public
+   */
+  webkitEnterFullscreen(fullScreenElement) {
+    this.#fullscreenUtils.webkitEnterFullscreen(fullScreenElement);
+  }
+
+  /**
+   * Exit fullscreen on a webkit (iOS) browser for a div tag.
+   *
+   * @memberof LCEVCdec
+   * @param {HTMLDivElement} fullScreenElement exit fullscreen for this element
+   * @public
+   */
+  webkitExitFullscreen(fullScreenElement) {
+    this.#fullscreenUtils.webkitExitFullscreen(fullScreenElement);
+  }
+
+  /**
+   * Returns a boolean indicating if we are currently displaying
+   * in fullscreen on webkit (iOS) browsers.
+   *
+   * @memberof LCEVCdec
+   * @returns {boolean} true if currently displaying in fullscreen
+   * @public
+   */
+  webkitDisplayingFullscreen() {
+    return this.#fullscreenUtils.webkitDisplayingFullscreen();
+  }
+
+  /**
+   * Returns a boolean indicating if LCEVCdec will handle device rotation
+   * events on webkit (iOS) browsers for entering and exiting fullscreen.
+   *
+   * @memberof Fullscreen
+   * @returns {boolean} true if LCEVCdec will handle device rotation events
+   * @public
+   */
+  webkitHandlesOnRotationEvents() {
+    return this.#fullscreenUtils.webkitHandlesOnRotationEvents();
   }
 
   // #endregion

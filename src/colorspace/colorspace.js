@@ -545,7 +545,6 @@ class ColorSpace {
  *
  * @param {!number} pixels The texture data captured from the video.
  * @param {!number} width The width of the texture.
- * @param {!number} height The height of the texture.
  * @param {!number} px The X position.
  * @param {!number} py The Y position.
  * @param {!number} y The Y value.
@@ -555,7 +554,7 @@ class ColorSpace {
  * @memberof ColorSpace
  * @private
  */
-ColorSpace.YUVPoint = function (pixels, width, height, px, py, y, u, v) {
+ColorSpace.YUVPoint = function (pixels, width, px, py, y, u, v) {
   const pointX = px >> 0;
   const pointY = py >> 0;
 

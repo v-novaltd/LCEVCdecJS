@@ -37,7 +37,7 @@ Detailed documentation is available for the different parts of LCEVCdecJS:
 
 * [LCEVCdec](docs/dec/LCEVCdec.md)
 * [DPI](docs/dec/dpi.md)
-* [Residual store](docs/dec/residual_store.md.md)
+* [Residual store](docs/dec/residual_store.md)
 * [Queue](docs/dec/queue.md)
 * [Renderer](docs/dec/renderer.md)
 * [Demuxer worker](docs/dec/demuxer_worker.md)

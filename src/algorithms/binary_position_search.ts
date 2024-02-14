@@ -19,7 +19,8 @@ export function _binaryPositionSearch(container: any[], value: any): number {
     const middleIndex = ~~((startIndex + endIndex) / 2);
     if (value === container[middleIndex]) {
       return middleIndex;
-    } if (value > container[middleIndex]) {
+    }
+    if (value > container[middleIndex]) {
       startIndex = middleIndex + 1;
     } else if (value < container[middleIndex]) {
       endIndex = middleIndex - 1;
