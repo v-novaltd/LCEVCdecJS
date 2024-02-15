@@ -1,6 +1,6 @@
 {
 	"name": "lcevc_dec.js",
-	"version": "1.0.0",
+	"version": "1.1.0",
 	"description": "V-Nova MPEG-5 LCEVC Decoder",
 	"main": "dist/lcevc_dec.min.js",
 	"scripts": {
@@ -26,8 +26,9 @@
 		"dist/lcevc_dec.min.js",
 		"dist/liblcevc_dpi.wasm",
 		"dist/package-info.txt",
-		"README.md",
-		"LICENSE"
+		"dist_docs/README.md",
+		"dist_docs/LICENSE",
+		"dist_docs/NOTICE"
 	],
 	"publishConfig": {
 		"registry": "https://nexus.dev.v-nova.com/repository/v-nova-npm-public/"
