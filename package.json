@@ -1,6 +1,6 @@
 {
 	"name": "lcevc_dec.js",
-	"version": "1.1.0",
+	"version": "1.1.1",
 	"description": "V-Nova MPEG-5 LCEVC Decoder",
 	"main": "dist/lcevc_dec.min.js",
 	"scripts": {
