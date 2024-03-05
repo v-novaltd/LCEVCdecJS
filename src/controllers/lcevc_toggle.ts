@@ -157,9 +157,10 @@ class LcevcToggle {
     this.#toggleImg = document.createElement('img');
     this.#toggleImg.className = 'toggleLCEVC-img';
     this.#toggleImg.src = lcevcToogleImg;
+    this.#toggleImg.crossOrigin = 'anonymous';
     this.#toggleImg.alt = 'LCEVC';
     videoControlsElement.appendChild(this.#toggleImg);
-    
+
     // Always initialise this.#dropdownImg, otherwise it may be undefined
     this.#dropdownImg = document.createElement('img');
     if(showArrowOnce) {
@@ -191,7 +192,7 @@ class LcevcToggle {
     this.#toggleInput.checked = true;
     this.#toggleInput.onchange = this._onToggleLcevc.bind(this);
     videoControlsElement.appendChild(this.#toggleInput);
-    
+
 
     this.#toggleLabel = document.createElement('label');
     this.#toggleLabel.className = 'onoffswitch-label';

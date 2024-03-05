@@ -215,7 +215,7 @@ class LCEVCdec {
   /** @private @type {number} */
   #ptsEnd = 0;
 
-  /** @private @type {HTMLElement} */
+  /** @private @type {HTMLImageElement} */
   #logoElement = null;
 
   /** @private @type {number} */
@@ -1015,6 +1015,7 @@ class LCEVCdec {
     const canvasParent = this.#canvas.parentElement;
     this.#logoElement = new Image();
     this.#logoElement.src = lcevcImg;
+    this.#logoElement.crossOrigin = 'anonymous';
     this.#logoElement.style.zIndex = '100';
     this.#logoElement.style.position = 'absolute';
     this.#logoElement.style.width = '15%';
