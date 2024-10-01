@@ -44,8 +44,24 @@ Detailed documentation is available for the different parts of LCEVCdecJS:
 * [Project structure](docs/structure.md)
 * [Updating dependencies](docs/update_deps.md)
 
-## License
+## Notice
 
-Copyright (c) V-Nova International Limited 2021-2024. All rights reserved.
+Copyright (c) V-Nova International Limited 2014 - 2024
+All rights reserved.
 
-This software is protected by copyrights and other intellectual property rights and no license is granted to any such rights. If you would like to obtain a license to compile, distribute, or make any other use of this software, please contact V-Nova Limited info@v-nova.com.
+Additional Information and Restrictions
+
+ * The LCEVCdecJS software is licensed under the BSD-3-Clause-Clear License.
+ * The LCEVCdecJS software is a stand-alone project and is NOT A CONTRIBUTION to any
+other project.
+ * If the software is incorporated into another project, THE TERMS OF THE BSD 3-
+Clause Clear License and the additional licensing information contained in this folder
+MUST BE MAINTAINED, AND THE SOFTWARE DOES NOT AND MUST NOT ADOPT THE LICENSE OF THE
+INCORPORATING PROJECT. However, the software may be incorporated into a project under
+a compatible license provided the requirements of the BSD-3-Clause-Clear license are
+respected, and V-Nova International Limited remains licensor of the software ONLY
+UNDER the BSD-3-Clause-Clear license (not the compatible license).
+ * ANY ONWARD DISTRIBUTION, WHETHER STAND-ALONE OR AS PART OF ANY OTHER PROJECT,
+REMAINS SUBJECT TO THE EXCLUSION OF PATENT LICENSES PROVISION OF THIS
+BSD-3-CLAUSE-CLEAR LICENSE. For enquiries about patent licenses, please contact
+legal@v-nova.com.

@@ -1,4 +1,25 @@
-/* Copyright (c) V-Nova International Limited 2021-2024. All rights reserved. */
+/**
+ * Copyright (c) V-Nova International Limited 2014 - 2024
+ * All rights reserved.
+ *
+ * This software is licensed under the BSD-3-Clause-Clear License. No patent licenses
+ * are granted under this license. For enquiries about patent licenses, please contact
+ * legal@v-nova.com. The LCEVCdecJS software is a stand-alone project and is NOT A
+ * CONTRIBUTION to any other project.
+ *
+ * If the software is incorporated into another project, THE TERMS OF THE
+ * BSD-3-CLAUSE-CLEAR LICENSE AND THE ADDITIONAL LICENSING INFORMATION CONTAINED IN
+ * THIS FILE MUST BE MAINTAINED, AND THE SOFTWARE DOES NOT AND MUST NOT ADOPT THE
+ * LICENSE OF THE INCORPORATING PROJECT. However, the software may be incorporated
+ * into a project under a compatible license provided the requirements of the
+ * BSD-3-Clause-Clear license are respected, and V-Nova International Limited remains
+ * licensor of the software ONLY UNDER the BSD-3-Clause-Clear license (not the
+ * compatible license).
+ *
+ * ANY ONWARD DISTRIBUTION, WHETHER STAND-ALONE OR AS PART OF ANY OTHER PROJECT,
+ * REMAINS SUBJECT TO THE EXCLUSION OF PATENT LICENSES PROVISION OF THE
+ * BSD-3-CLAUSE-CLEAR LICENSE.
+ */
 
 import { shaderNames } from './shaders/shaders_src';
 import {
@@ -40,11 +61,15 @@ const COL_DROP = 0xee6258;
 const COL_DISP = 0x5ed675;
 
 const CSS_ZINDEX = 1000;
+const CSS_PADDING = 10;
 
 const DATA_WIDTH = 256;
 const CHART_HISTORY = 128;
 const RATE_HISTORY = 20;
 const RADIAL_SIZE = 100;
+
+const PADDING = 10;
+const TOTAL_CHART_WIDTH = RATE_HISTORY * 5 + PADDING + CHART_HISTORY * 2 + PADDING + RADIAL_SIZE;
 
 /**
  * The Stats class show information about the video, LCEVC and residuals.
@@ -185,6 +210,12 @@ class Stats {
 
   /** @private @type {BDO} */
   #radialDataBDO = null;
+
+  /** @private @type {number} */
+  #totalDroppedFrames = 0;
+
+  /** @private @type {number} */
+  #totalProcessedFrames = 0;
 
   /**
    * Creates an instance of Stats.
@@ -618,6 +649,8 @@ class Stats {
 
       // Check for end of processing.
       if (now >= this.#sampleRecordEnd) {
+        const droppedFrameCount = Math.round(this.#sampleFrameRate) - this.#sampleData.unique;
+
         // Render on chart.
         this.#addSample(
           this.#sampleFrameRate,
@@ -630,12 +663,23 @@ class Stats {
         let t = '';
         const br = '<br/>';
         t += `fps: ${this.#sampleFrameRate.toFixed(3)}${br}`;
-        t += `processed: ${this.#sampleData.processed}${br}`;
-        t += `display:   ${this.#sampleData.unique}${br}`;
-        t += `drop:      ${this.#sampleData.dropped}${br}`;
+
+        t += `> Processed ${br}`;
+        t += `current:   ${this.#sampleData.processed}${br}`;
+        t += `total:     ${this.#totalProcessedFrames}${br}`;
+
+        t += `> Displayed  ${br}`;
+        t += `current:   ${this.#sampleData.unique}${br}`;
+
+        t += `> Dropped    ${br}`;
+        t += `current:   ${droppedFrameCount}${br}`;
+        t += `total:     ${this.#totalDroppedFrames}${br}`;
+
         this.#textSampleFrames = t;
         this.#currentRenderedFrames = this.#sampleData.processed;
         this.#currentDroppedFrames = this.#sampleData.dropped;
+        this.#totalDroppedFrames += droppedFrameCount;
+        this.#totalProcessedFrames += this.#sampleData.processed;
         // Start next sample.
         this.#sampleMode = SampleStatsType.SAMPLER_IDLE;
       }
@@ -764,6 +808,17 @@ class Stats {
   * @memberof Stats
   * @public
   */
+  get totalDroppedFrames() {
+    return this.#totalDroppedFrames;
+  }
+
+  /**
+  *
+  * @readonly
+  * @returns {number}
+  * @memberof Stats
+  * @public
+  */
   get _getCurrentRenderedFrames() {
     return this.#currentRenderedFrames;
   }
@@ -791,14 +846,14 @@ class Stats {
   #initChartsCanvas() {
     // Create webgl display canvas.
     const canvas = document.createElement('canvas');
-    canvas.width = RATE_HISTORY * 5 + 10 + CHART_HISTORY * 2 + 10 + RADIAL_SIZE;
+    canvas.width = TOTAL_CHART_WIDTH;
     canvas.height = RADIAL_SIZE;
     canvas.style.cssText = `
     position: absolute;
     display: block;
     top: 0;
     right: 0;
-    padding: 10px;
+    padding: ${CSS_PADDING}px;
     z-index: ${CSS_ZINDEX};
     background-color: ${Stats.#colRGBA(COL_BACK, COL_BACK_ALPHA)};`;
 
@@ -1416,8 +1471,19 @@ class Stats {
 
     // Render charts.
     this.#renderRadialChart();
-    this.#renderBarChart();
-    this.#renderBarChart2();
+
+    // overlayWidth holds the combined debug stats and debug charts width
+    const overlayWidth = (this.#objInfo?.offsetWidth || 0) + (TOTAL_CHART_WIDTH + CSS_PADDING * 2);
+    const parentElementWidth = this.#canvasCharts?.parentElement?.offsetWidth || 0;
+
+    // On mobile devices only render the radial chart, otherwise charts overlap other elements
+    if (parentElementWidth > overlayWidth) {
+      this.#renderBarChart();
+      this.#renderBarChart2();
+      this.#canvasCharts.width = TOTAL_CHART_WIDTH;
+    } else {
+      this.#canvasCharts.width = RADIAL_SIZE;
+    }
 
     return Result.OK;
   }

@@ -1,4 +1,25 @@
-/* Copyright (c) V-Nova International Limited 2021-2024. All rights reserved. */
+/**
+ * Copyright (c) V-Nova International Limited 2014 - 2024
+ * All rights reserved.
+ *
+ * This software is licensed under the BSD-3-Clause-Clear License. No patent licenses
+ * are granted under this license. For enquiries about patent licenses, please contact
+ * legal@v-nova.com. The LCEVCdecJS software is a stand-alone project and is NOT A
+ * CONTRIBUTION to any other project.
+ *
+ * If the software is incorporated into another project, THE TERMS OF THE
+ * BSD-3-CLAUSE-CLEAR LICENSE AND THE ADDITIONAL LICENSING INFORMATION CONTAINED IN
+ * THIS FILE MUST BE MAINTAINED, AND THE SOFTWARE DOES NOT AND MUST NOT ADOPT THE
+ * LICENSE OF THE INCORPORATING PROJECT. However, the software may be incorporated
+ * into a project under a compatible license provided the requirements of the
+ * BSD-3-Clause-Clear license are respected, and V-Nova International Limited remains
+ * licensor of the software ONLY UNDER the BSD-3-Clause-Clear license (not the
+ * compatible license).
+ *
+ * ANY ONWARD DISTRIBUTION, WHETHER STAND-ALONE OR AS PART OF ANY OTHER PROJECT,
+ * REMAINS SUBJECT TO THE EXCLUSION OF PATENT LICENSES PROVISION OF THE
+ * BSD-3-CLAUSE-CLEAR LICENSE.
+ */
 
 import { Log } from '../log.ts';
 import {
@@ -1091,6 +1112,17 @@ class Queue {
   }
 
   /**
+   * Clear previous render times. This is needed when, for example,
+   * we exit PiP mode, since the render times during PiP mode will be incorrect.
+   *
+   * @memberof Queue
+   * @public
+   */
+  _clearPreviousRenderTimes() {
+    this.#previousRenderTimes = [];
+  }
+
+  /**
    * Check whether the current environment (player, streamingFormat, containerFormat)
    * matches the environment provided in the arguments.
    *
@@ -1135,10 +1167,18 @@ class Queue {
     };
 
     if (this.#live() && this.#env(Player.SHAKA, StreamingFormat.DASH, MediaContainer.MP4)) {
+      // fixed offset of 0.08 is needed for MP4 dash contents
       return { offset: 0.08, drift: 0, correctFirstKeyframe: false };
     }
     if (this.#live() && this.#env(Player.SHAKA, StreamingFormat.HLS, MediaContainer.MP4)) {
-      return { ...defaults, correctFirstKeyframe: false };
+      // Value of 0.066 refers to the firstKeyframeOffset, which is usually set by the packager
+      // and should remain the same for the majority of cases. It can be calculated dynamically
+      // by firstKeyframeOffset + first append timestampOffset - second append timestampOffset.
+      return {
+        ...defaults,
+        offset: this.#lcevcDec.timestampOffset + 0.066,
+        correctFirstKeyframe: false
+      };
     }
     if (this.#live() && this.#env(Player.SHAKA, StreamingFormat.HLS, MediaContainer.TS)) {
       return { ...defaults, offset: this.#lcevcDec.timestampOffset, correctFirstKeyframe: false };

@@ -1,4 +1,25 @@
-/* Copyright (c) V-Nova International Limited 2021-2024. All rights reserved. */
+/**
+ * Copyright (c) V-Nova International Limited 2014 - 2024
+ * All rights reserved.
+ *
+ * This software is licensed under the BSD-3-Clause-Clear License. No patent licenses
+ * are granted under this license. For enquiries about patent licenses, please contact
+ * legal@v-nova.com. The LCEVCdecJS software is a stand-alone project and is NOT A
+ * CONTRIBUTION to any other project.
+ *
+ * If the software is incorporated into another project, THE TERMS OF THE
+ * BSD-3-CLAUSE-CLEAR LICENSE AND THE ADDITIONAL LICENSING INFORMATION CONTAINED IN
+ * THIS FILE MUST BE MAINTAINED, AND THE SOFTWARE DOES NOT AND MUST NOT ADOPT THE
+ * LICENSE OF THE INCORPORATING PROJECT. However, the software may be incorporated
+ * into a project under a compatible license provided the requirements of the
+ * BSD-3-Clause-Clear license are respected, and V-Nova International Limited remains
+ * licensor of the software ONLY UNDER the BSD-3-Clause-Clear license (not the
+ * compatible license).
+ *
+ * ANY ONWARD DISTRIBUTION, WHETHER STAND-ALONE OR AS PART OF ANY OTHER PROJECT,
+ * REMAINS SUBJECT TO THE EXCLUSION OF PATENT LICENSES PROVISION OF THE
+ * BSD-3-CLAUSE-CLEAR LICENSE.
+ */
 
 import { lcevcToogleImg } from './lcevc_assets';
 import { Result } from '../globals/enums';
@@ -163,7 +184,7 @@ class LcevcToggle {
 
     // Always initialise this.#dropdownImg, otherwise it may be undefined
     this.#dropdownImg = document.createElement('img');
-    if(showArrowOnce) {
+    if (showArrowOnce) {
       showArrowOnce = false;
       this.#dropdownImg.className = 'dropdown-img';
       this.#dropdownImg.dataset.decDropDownImg = '';
@@ -193,7 +214,6 @@ class LcevcToggle {
     this.#toggleInput.onchange = this._onToggleLcevc.bind(this);
     videoControlsElement.appendChild(this.#toggleInput);
 
-
     this.#toggleLabel = document.createElement('label');
     this.#toggleLabel.className = 'onoffswitch-label';
     this.#toggleLabel.htmlFor = toggleID;
@@ -207,8 +227,6 @@ class LcevcToggle {
     switchSpan.className = 'onoffswitch-switch';
     this.#toggleLabel.appendChild(switchSpan);
   }
-
-
 
   /**
    * Remove the elements.

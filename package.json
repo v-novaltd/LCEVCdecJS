@@ -1,6 +1,6 @@
 {
 	"name": "lcevc_dec.js",
-	"version": "1.1.1",
+	"version": "1.1.5",
 	"description": "V-Nova MPEG-5 LCEVC Decoder",
 	"main": "dist/lcevc_dec.min.js",
 	"scripts": {
@@ -36,9 +36,9 @@
 		"@babel/core": "^7.12.10",
 		"@babel/eslint-parser": "^7.12.1",
 		"@babel/eslint-plugin": "^7.12.1",
-		"@babel/plugin-proposal-class-properties": "^7.12.1",
-		"@babel/plugin-proposal-private-methods": "^7.12.1",
-		"@babel/plugin-proposal-private-property-in-object": "^7.12.1",
+		"@babel/plugin-transform-class-properties": "^7.24.1",
+		"@babel/plugin-transform-private-methods": "^7.24.1",
+		"@babel/plugin-transform-private-property-in-object": "^7.24.1",
 		"@babel/plugin-transform-runtime": "^7.14.3",
 		"@babel/preset-env": "^7.19.4",
 		"@babel/preset-typescript": "^7.13.0",
@@ -51,8 +51,8 @@
 		"@rollup/plugin-replace": "^4.0.0",
 		"@rollup/plugin-typescript": "^8.5.0",
 		"@types/estree": "^1.0.0",
-		"@typescript-eslint/eslint-plugin": "^4.15.0",
-		"@typescript-eslint/parser": "^4.15.0",
+		"@typescript-eslint/eslint-plugin": "^5.0.0",
+		"@typescript-eslint/parser": "^5.0.0",
 		"babel-loader": "^8.2.2",
 		"babelify": "^10.0.0",
 		"browserify": "^17.0.0",
@@ -81,7 +81,7 @@
 		"ts-node": "^8.10.2",
 		"tsify": "^5.0.4",
 		"tslib": "^2.4.0",
-		"typescript": "4.3.4",
+		"typescript": "^4.3.4",
 		"watchify": "^4.0.0"
 	},
 	"dependencies": {

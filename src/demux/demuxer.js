@@ -1,4 +1,25 @@
-/* Copyright (c) V-Nova International Limited 2021-2024. All rights reserved. */
+/**
+ * Copyright (c) V-Nova International Limited 2014 - 2024
+ * All rights reserved.
+ *
+ * This software is licensed under the BSD-3-Clause-Clear License. No patent licenses
+ * are granted under this license. For enquiries about patent licenses, please contact
+ * legal@v-nova.com. The LCEVCdecJS software is a stand-alone project and is NOT A
+ * CONTRIBUTION to any other project.
+ *
+ * If the software is incorporated into another project, THE TERMS OF THE
+ * BSD-3-CLAUSE-CLEAR LICENSE AND THE ADDITIONAL LICENSING INFORMATION CONTAINED IN
+ * THIS FILE MUST BE MAINTAINED, AND THE SOFTWARE DOES NOT AND MUST NOT ADOPT THE
+ * LICENSE OF THE INCORPORATING PROJECT. However, the software may be incorporated
+ * into a project under a compatible license provided the requirements of the
+ * BSD-3-Clause-Clear license are respected, and V-Nova International Limited remains
+ * licensor of the software ONLY UNDER the BSD-3-Clause-Clear license (not the
+ * compatible license).
+ *
+ * ANY ONWARD DISTRIBUTION, WHETHER STAND-ALONE OR AS PART OF ANY OTHER PROJECT,
+ * REMAINS SUBJECT TO THE EXCLUSION OF PATENT LICENSES PROVISION OF THE
+ * BSD-3-CLAUSE-CLEAR LICENSE.
+ */
 
 // //@ts-check
 
@@ -105,6 +126,9 @@ class Demuxer {
 
   /** @private @type {number} */
   #level = -1;
+
+  /** @private @type {boolean} */
+  #isRawLcevc = false;
 
   /** @private @type {number} */
   #mp4SampleCount = 0
@@ -359,8 +383,14 @@ class Demuxer {
             0
           ];
 
-          Demuxer.convertAVCCtoAnnexB(data);
-          this.#findAndStoreLcevcDataAnnexB(data, mapKey, frameSample, level);
+          // Raw LCEVC data can be directly passed to the residual store, whereas encapsulated
+          // LCEVC data will need further demuxing and processing
+          if (this.#isRawLcevc) {
+            this._demuxedLcevcData(data, ...frameSample.slice(0, -1), level);
+          } else {
+            Demuxer.convertLengthPrefixToAnnexB(data);
+            this.#findAndStoreLcevcDataAnnexB(data, mapKey, frameSample, level);
+          }
         }
         this.#previousSampleCount = samples.length;
         this.#prevTimeStampOffset = this.#baseMediaDecodeTime;
@@ -432,24 +462,27 @@ class Demuxer {
      * @param {!number} timescale Timescale associated with the timestamp
      * @param {!number} duration duration of the buffer
      * @param {!number} baseDecodeTime base frame decode time
+     * @param {!boolean} keyframe true if frame is a keyframe
+     * @param {!number} level profile for the appended LCEVC data
      * @memberof Demuxer
      * @public
      */
-  async _rawLcevcData(lcevcData, timestamp, timescale, duration, baseDecodeTime) {
+  async _demuxedLcevcData(lcevcData, timestamp, timescale, duration, baseDecodeTime, keyframe,
+    level) {
     const frameSample = [
       timestamp,
       timescale,
       duration,
       baseDecodeTime,
-      true,
+      keyframe,
       0
     ];
     this.#workerSelf.postMessage({
-      id: 'rawLCEVC',
+      id: 'lcevcData',
       end: false,
-      level: -1,
+      level,
       frameSample,
-      lcevcData
+      pssData: lcevcData
     });
   }
 
@@ -472,7 +505,7 @@ class Demuxer {
       0
     ];
     if (naluFormat !== 2) {
-      Demuxer.convertAVCCtoAnnexB(lcevcData);
+      Demuxer.convertLengthPrefixToAnnexB(lcevcData);
     }
     this.#findAndStoreLcevcDataAnnexB(lcevcData, timestamp, frameSample, -1);
   }
@@ -808,7 +841,18 @@ class Demuxer {
   }
 
   /**
-   * Converts AVCC (ISO/IEC 14496-15) H264 data to AnnexB (ISO/IEC 14496-10)
+   * Set if passed buffers contain raw LCEVC data.
+   *
+   * @param {boolean} value true if buffers contain raw LCEVC data
+   * @memberof Demuxer
+   * @public
+   */
+  _setIsRawLcevc(value) {
+    this.#isRawLcevc = value;
+  }
+
+  /**
+   * Converts length prefix formatted buffers to AnnexB (ISO/IEC 14496-10)
    * format. This may need to be done if the stream packager does not correctly
    * follow the AVCC standard and leaves start codes mixed with NALU sizes.
    *
@@ -816,7 +860,7 @@ class Demuxer {
    * @memberof Demuxer
    * @private
    */
-  static convertAVCCtoAnnexB(frameData) {
+  static convertLengthPrefixToAnnexB(frameData) {
     let i = 0;
     let naluSize = 0;
     do {
