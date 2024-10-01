@@ -53,7 +53,7 @@ greater. Follow the installation instructions and add installed location to
 
 Good instructions on how to install Python virtual environments on Windows
 machine are available
-[here](https://docs.python.org/3/tutorial/venv.htm)
+[here](https://docs.python.org/3/tutorial/venv.html)
 
 ### Installing NodeJS
 

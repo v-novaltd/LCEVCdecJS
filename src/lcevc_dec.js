@@ -1,5 +1,26 @@
 /* eslint-disable max-len */
-/* Copyright (c) V-Nova International Limited 2021-2024. All rights reserved. */
+/**
+ * Copyright (c) V-Nova International Limited 2014 - 2024
+ * All rights reserved.
+ *
+ * This software is licensed under the BSD-3-Clause-Clear License. No patent licenses
+ * are granted under this license. For enquiries about patent licenses, please contact
+ * legal@v-nova.com. The LCEVCdecJS software is a stand-alone project and is NOT A
+ * CONTRIBUTION to any other project.
+ *
+ * If the software is incorporated into another project, THE TERMS OF THE
+ * BSD-3-CLAUSE-CLEAR LICENSE AND THE ADDITIONAL LICENSING INFORMATION CONTAINED IN
+ * THIS FILE MUST BE MAINTAINED, AND THE SOFTWARE DOES NOT AND MUST NOT ADOPT THE
+ * LICENSE OF THE INCORPORATING PROJECT. However, the software may be incorporated
+ * into a project under a compatible license provided the requirements of the
+ * BSD-3-Clause-Clear license are respected, and V-Nova International Limited remains
+ * licensor of the software ONLY UNDER the BSD-3-Clause-Clear license (not the
+ * compatible license).
+ *
+ * ANY ONWARD DISTRIBUTION, WHETHER STAND-ALONE OR AS PART OF ANY OTHER PROJECT,
+ * REMAINS SUBJECT TO THE EXCLUSION OF PATENT LICENSES PROVISION OF THE
+ * BSD-3-CLAUSE-CLEAR LICENSE.
+ */
 
 import DemuxerWorker from 'web-worker:./demux/demuxer_worker.js'; // eslint-disable-line
 import {
@@ -19,7 +40,6 @@ import { lcevcImg } from './controllers/lcevc_assets.ts';
 import { _deleteFBO } from './graphics/webgl';
 import { mergeConfigurations } from './config.ts';
 import EnvironmentUtils from './utils/environment_utils';
-import Fullscreen from './fullscreen/fullscreen';
 
 const PERFORMANCE_MIN_COUNT = 300;
 const PERFORMANCE_SCALE_FACTOR = 2;
@@ -68,7 +88,7 @@ class LCEVCdec {
   #audioCtx = null;
 
   /** @private @type {MediaElementAudioSourceNode} */
-  #audioVideoElement = null;
+  #audioElement = null;
 
   /** @private @type {GainNode} */
   #audioNodeGain = null;
@@ -224,6 +244,13 @@ class LCEVCdec {
   /** @private @type {number} */
   #logoOffset = 0;
 
+  /** @private @type {object} */
+  #pictureInPicture = {
+    active: false,
+    canvasStyle: null,
+    videoStyle: null
+  };
+
   /** @private @type {boolean} */
   #progressOnce = true;
 
@@ -248,11 +275,14 @@ class LCEVCdec {
   /** @public @type {boolean} */
   seekedForFirstKeyframe = false;
 
+  /** @private @type {string} */
+  #oldCanvasPosition = '';
+
+  /** @private @type {boolean} */
+  #oldCanvasPositionSaved = false;
+
   /** @private @type {number} */
   #previousLevel = -1;
-
-  /** @private @type {object} */
-  #fullscreenUtils = null;
 
   /**
    * Construct the LCEVCdec object.
@@ -476,9 +506,9 @@ class LCEVCdec {
     this.#queue = new Queue(this, gl);
     this.#residualStore = new ResidualStore(this);
     this.#renderer = new Renderer(gl);
-    this.#fullscreenUtils = new Fullscreen(this);
 
     this.#browserDetection();
+    this.#webkitOverrideFullscreen();
 
     // Video listeners.
     this.#unbindVideoEvents();
@@ -509,11 +539,10 @@ class LCEVCdec {
 
     this.#loopStart();
 
-    /**
-     * Resize multiple video instances
-     *
-     * Add the global resizer only if it does not exist.
-     */
+    this.#registerPictureInPictureEvents();
+
+    // Resize multiple video instances
+    // Add the global resizer only if it does not exist.
     if (!window.__lcevcDecResizer) window.__lcevcDecResizer = this.#lcevcDecResizerPartial();
 
     // Call the resizer
@@ -560,10 +589,10 @@ class LCEVCdec {
   }
 
   /**
-   * Returns if the video is live or not.
+   * Returns if LCEVC is being presently decoded.
    *
    * @readonly
-   * @returns {boolean} Return `true` if the video is live, otherwise `false`.
+   * @returns {boolean} Return `true` if LCEVC is being presently decoded, otherwise `false`.
    * @memberof LCEVCdec
    * @exports
    */
@@ -821,6 +850,17 @@ class LCEVCdec {
   }
 
   /**
+   *
+   * @readonly
+   * @returns {number}
+   * @memberof LCEVCdec
+   * @exports
+   */
+  get totalDroppedFrames() {
+    return this.#stats.totalDroppedFrames;
+  }
+
+  /**
    * Set shaderKernel0 used for upscaling
    *
    * @param {Array} kernel The kernel.
@@ -1027,24 +1067,27 @@ class LCEVCdec {
   /**
    * Show or hide the logo.
    *
-   * @param {boolean} onOff `true` to show it and `false` to hide it.
+   * @param {boolean} enabled `true` to show it and `false` to hide it.
+   * @param {boolean} requireMultipleCallsToDisable `false` to disable logo on first call
    * @returns {Result}
    * @memberof LCEVCdec
    * @public
    */
-  _toggleLogo(onOff) {
-    if (!this.#configOptions.logo || !this.#logoElement || this.#logoElement.hidden === !onOff) {
+  _toggleLogo(enabled, requireMultipleCallsToDisable = true) {
+    if (!this.#configOptions.logo || !this.#logoElement || this.#logoElement.hidden === !enabled) {
       return Result.ERROR;
     }
-    if (onOff === false) {
-      this.#logoOffset += 1;
-    }
-    if (!onOff && this.#logoOffset <= 3) {
-      return Result.OK;
+    if (requireMultipleCallsToDisable) {
+      if (!enabled) {
+        this.#logoOffset += 1;
+      }
+      if (!enabled && this.#logoOffset <= 3) {
+        return Result.OK;
+      }
     }
     this.#logoOffset = 0;
-    this.#logoElement.hidden = !onOff;
-    this.#lcevcPresentlyDecoded = onOff;
+    this.#logoElement.hidden = !enabled;
+    this.#lcevcPresentlyDecoded = enabled;
     return Result.OK;
   }
 
@@ -1052,13 +1095,21 @@ class LCEVCdec {
    * Enable or disable LCEVC.
    * Also, it calls to `_toggleLogo`.
    *
-   * @param {boolean} onOff `true` to enable it and `false` to disable it.
+   * @param {boolean} enabled `true` to enable it and `false` to disable it.
+   * @param {boolean} forceRender `true` to force a re-render
    * @memberof LCEVCdec
    * @public
    */
-  _enableLcevc(onOff) {
-    this.#lcevcEnabled = onOff;
-    this._toggleLogo(onOff);
+  _enableLcevc(enabled, forceRender = false) {
+    this.#lcevcEnabled = enabled;
+
+    if (forceRender) {
+      this._toggleLogo(enabled, false);
+      this.setConfigOption('shaderPath', this.getConfigOption('shaderPath') === 0 ? 1 : 0);
+      this.video.dispatchEvent(new Event('render'));
+    } else {
+      this._toggleLogo(enabled);
+    }
   }
 
   /**
@@ -1270,7 +1321,15 @@ class LCEVCdec {
    * @public
    */
   _updateAudioParams(audioDelay) {
-    if (this.#audioVideoElement !== null) {
+    // In PictureInPicture mode, the shader pipeline provides incorrect timings
+    // to calculate the audio delay. Since we default to the video tag in PiP mode,
+    // audio delay of 0.0 should be correct.
+    if (this.#pictureInPicture.active) {
+      this.audioNodeDelay.delayTime.value = 0.0;
+      return Result.OK;
+    }
+
+    if (this.#audioElement !== null) {
       this.audioNodeDelay.delayTime.value = audioDelay > 0 ? audioDelay : 0;
     }
 
@@ -1287,9 +1346,9 @@ class LCEVCdec {
   #initialiseAudioParams() {
     if (this.#setAudioContext() === Result.OK) {
       // get context
-      if (this.#audioVideoElement === null) {
+      if (this.#audioElement === null) {
         try {
-          this.#audioVideoElement = this.#audioCtx.createMediaElementSource(this.video);
+          this.#audioElement = this.#audioCtx.createMediaElementSource(this.video);
         } catch (err) {
           Error(err);
         }
@@ -1305,8 +1364,8 @@ class LCEVCdec {
       this.audioNodeDelay.delayTime.value = this.#queue._getAudioDelay;
 
       try {
-      // connect to video
-        this.#audioVideoElement.connect(this.audioNodeDelay);
+        // connect to video
+        this.#audioElement.connect(this.audioNodeDelay);
       } catch (err) {
         Error(err);
       }
@@ -1603,13 +1662,18 @@ class LCEVCdec {
    * @private
    */
   #resizeFullScreenCanvas(width, height, padding, paddingDirection) {
+    if (!this.#oldCanvasPositionSaved) {
+      this.#oldCanvasPositionSaved = true;
+      this.#oldCanvasPosition = this.#canvas.style.position;
+    }
+    this.#canvas.style.position = 'absolute';
     this.#canvas.style.height = height === 'auto' ? height : `${height}px`;
     this.#canvas.style.width = width === 'auto' ? width : `${width}px`;
     this.#canvas.style[paddingDirection] = padding;
   }
 
   /**
-   * Manages ajustmetns for fullscreen, fullscreen-exit, orientation change and resize.
+   * Manages adjustments for fullscreen, fullscreen-exit, orientation change and resize.
    *
    * @memberof LCEVCdec
    * @private
@@ -1618,7 +1682,7 @@ class LCEVCdec {
     this.#canvas.style.top = '0px';
     this.#canvas.style.left = '0px';
     const fullscreenElement = document.fullscreenElement // eslint-disable-line
-    || document.webkitCurrentFullScreenElement;
+      || document.webkitCurrentFullScreenElement;
     // All fullscreen changes handled here.
     if (fullscreenElement) {
       const frameAspectRatio = this.frameWidth / this.frameHeight;
@@ -1630,9 +1694,9 @@ class LCEVCdec {
         } else {
           this.#resizeFullScreenCanvas(fullscreenElement.clientWidth, 'auto', `${(fullscreenElement.clientHeight - this.#canvas.height) / 2}px`, 'top');
         }
-      // For when screen orientation is portrait and content height can fit the screen height
+        // For when screen orientation is portrait and content height can fit the screen height
       } else if (fullscreenElement.clientHeight >= (1 / frameAspectRatio) * fullscreenElement.clientWidth) {
-        this.#resizeFullScreenCanvas(frameAspectRatio * fullscreenElement.clientHeight, 'auto', `${(fullscreenElement.clientHeight - this.#canvas.height) / 2}px`, 'top');
+        this.#resizeFullScreenCanvas(fullscreenElement.clientWidth, 'auto', `${(fullscreenElement.clientHeight - this.#canvas.height) / 2}px`, 'top');
       } else {
         this.#resizeFullScreenCanvas('auto', fullscreenElement.clientWidth / frameAspectRatio, `${(fullscreenElement.clientWidth - this.#canvas.width) / 2}px`, 'left');
       }
@@ -1645,6 +1709,8 @@ class LCEVCdec {
         this.#video.style.display = 'block';
       }
     } else {
+      this.#oldCanvasPositionSaved = false;
+      this.#canvas.style.position = this.#oldCanvasPosition;
       this.#video.style.display = 'block';
       this.#canvas.style.width = '100%';
       this.#canvas.style.height = '100%';
@@ -1755,6 +1821,66 @@ class LCEVCdec {
       this.#videoEvent({ type: 'resizing' });
     }
     this.#morphingAjustments();
+  }
+
+  /**
+   * Register PictureInPicture events.
+   *
+   * @memberof LCEVCdec
+   * @private
+   */
+  #registerPictureInPictureEvents() {
+    if (window.documentPictureInPicture) {
+      this.#addListener(window.documentPictureInPicture, 'enter',
+        this.#onEnterPictureInPicture.bind(this));
+    }
+  }
+
+  /**
+   * On enter PictureInPicture callback.
+   *
+   * @memberof LCEVCdec
+   * @private
+   */
+  #onEnterPictureInPicture() {
+    const canvasStyle = this.#canvas.style;
+    const videoStyle = this.#video.style;
+
+    this.#pictureInPicture = {
+      active: true,
+      canvasStyle: canvasStyle.display,
+      videoStyle: videoStyle.display
+    };
+
+    canvasStyle.display = 'none';
+    videoStyle.display = 'block';
+
+    // Attach an exit event listener. Since pipWindow is destroyed,
+    // this does not result in duplicate event liseteners.
+    const pipWindow = window.documentPictureInPicture.window;
+    pipWindow.addEventListener('pagehide', this.#onExitPictureInPicture.bind(this));
+  }
+
+  /**
+   * On exit PictureInPicture callback.
+   *
+   * @memberof LCEVCdec
+   * @private
+   */
+  #onExitPictureInPicture() {
+    this.#canvas.style.display = this.#pictureInPicture.canvasStyle;
+    this.#video.style.display = this.#pictureInPicture.videoStyle;
+
+    // Clear previous render times because this will cause incorrect
+    // audio delay to be calculated, since in PiP mode the
+    // render times are inaccurate
+    this.#queue._clearPreviousRenderTimes();
+
+    this.#pictureInPicture = {
+      active: false,
+      canvasStyle: null,
+      videoStyle: null
+    };
   }
 
   /**
@@ -1973,10 +2099,11 @@ class LCEVCdec {
    * @param {'video'|'audiovideo'} type The type of the fragment.
    * @param {!number} level The level of the fragment.
    * @param {!number} timestampOffset Offset added to the timestamps in the fragment.
+   * @param {boolean} isMuxed false if buffers contain raw (non-muxed) LCEVC data (defaults to true)
    * @returns {Result}
    * @exports
    */
-  appendBuffer(data, type, level, timestampOffset = 0.0) {
+  appendBuffer(data, type, level, timestampOffset = 0.0, isMuxed = true) {
     if (type !== 'video' && type !== 'audiovideo') {
       throw new Error('Type should be "video" or "audiovideo"');
     }
@@ -1990,7 +2117,11 @@ class LCEVCdec {
       this.setTimestampOffset(timestampOffset);
     }
 
-    if (level !== this.#previousLevel) {
+    // Players can have different timestampOffsets for each profile. In some cases,
+    // the received data can be a header (byteLength < 1024), which contains an
+    // incorrect timestampOffset. Only offsets from video data (byteLength > 1024)
+    // are accepted.
+    if (level !== this.#previousLevel && data.byteLength > 1024) {
       this.#previousLevel = level;
       this.#timestampOffsetForNextProfile = timestampOffset;
     }
@@ -2002,6 +2133,7 @@ class LCEVCdec {
         videoData: dataToWorker,
         level,
         type,
+        isRawLcevc: !isMuxed,
         containerFormat: this.containerFormat
       },
       [dataToWorker.buffer]
@@ -2610,62 +2742,63 @@ class LCEVCdec {
   }
 
   /**
-   * Returns a boolean indicating if fullscreen is supported
-   * for the provided element in webkit (iOS) browsers.
+   * Overrides default iOS behaviour for entering/exiting fullscreen.
+   * The default behaviour will fullscreen the base video and hide the
+   * canvas (i.e. the enhanced image) when entering fullscreen. This
+   * logic creates a secondary video tag. The enhanced image rendered
+   * on the canvas will be passed to this secondary video tag using
+   * captureStream. Entering fullscreen on the secondary video would
+   * allow the enhanced image to remain visible in fullscreen.
    *
    * @memberof LCEVCdec
-   * @param {HTMLDivElement} fullScreenElement element to be checked
-   * @returns {boolean} true if fullscreen is supported
-   * @public
+   * @private
    */
-  webkitSupportsFullscreen(fullScreenElement) {
-    return this.#fullscreenUtils.webkitSupportsFullscreen(fullScreenElement);
-  }
+  #webkitOverrideFullscreen() {
+    const video = this.#video;
 
-  /**
-   * Enter fullscreen on a webkit (iOS) browser for a div tag.
-   *
-   * @memberof LCEVCdec
-   * @param {HTMLDivElement} fullScreenElement element to be displayed in fullscreen
-   * @public
-   */
-  webkitEnterFullscreen(fullScreenElement) {
-    this.#fullscreenUtils.webkitEnterFullscreen(fullScreenElement);
-  }
+    // Check if running in iOS environment. Fullscreen API is not available
+    // on iPhone devices (document.fullscreenEnabled === false).
+    if (document.fullscreenEnabled) return;
+    if (!video.webkitSupportsFullscreen) return;
 
-  /**
-   * Exit fullscreen on a webkit (iOS) browser for a div tag.
-   *
-   * @memberof LCEVCdec
-   * @param {HTMLDivElement} fullScreenElement exit fullscreen for this element
-   * @public
-   */
-  webkitExitFullscreen(fullScreenElement) {
-    this.#fullscreenUtils.webkitExitFullscreen(fullScreenElement);
-  }
+    // Setup the secondary video tag
+    const capture = document.createElement('video');
+    capture.id = 'capture-video';
+    capture.width = 1;
+    capture.height = 1;
+    capture.playsInline = true;
+    capture.autoplay = true;
+    capture.controls = true;
+    document.body.appendChild(capture); // eslint-disable-line compat/compat
 
-  /**
-   * Returns a boolean indicating if we are currently displaying
-   * in fullscreen on webkit (iOS) browsers.
-   *
-   * @memberof LCEVCdec
-   * @returns {boolean} true if currently displaying in fullscreen
-   * @public
-   */
-  webkitDisplayingFullscreen() {
-    return this.#fullscreenUtils.webkitDisplayingFullscreen();
-  }
+    // Pass the enhanced image from the canvas to the secondary video tag
+    const canvas = this.#canvas;
+    capture.srcObject = canvas.captureStream(60); // use 60 fps initially
 
-  /**
-   * Returns a boolean indicating if LCEVCdec will handle device rotation
-   * events on webkit (iOS) browsers for entering and exiting fullscreen.
-   *
-   * @memberof Fullscreen
-   * @returns {boolean} true if LCEVCdec will handle device rotation events
-   * @public
-   */
-  webkitHandlesOnRotationEvents() {
-    return this.#fullscreenUtils.webkitHandlesOnRotationEvents();
+    capture.addEventListener('play', () => { video.play(); });
+    capture.addEventListener('pause', () => { video.pause(); });
+
+    video.addEventListener('play', () => { capture.play(); });
+    video.addEventListener('pause', () => { capture.pause(); });
+
+    // Redirect entering and exiting fullscreen from the base video tag
+    // to the secondary video tag
+    if (video.webkitEnterFullscreen) {
+      video.webkitEnterFullscreen = () => {
+        capture.webkitEnterFullscreen();
+
+        // Update the fps of the capture. Needs a delay after webkitEnterFullscreen
+        // because calling it immediatelly will generate an InvalidStateError.
+        setTimeout(() => {
+          capture.srcObject = canvas.captureStream(this.#reportedFrameRate); // update the fps
+        }, 100);
+      };
+    }
+    if (video.webkitExitFullscreen) {
+      video.webkitExitFullscreen = () => {
+        capture.webkitExitFullscreen();
+      };
+    }
   }
 
   // #endregion
