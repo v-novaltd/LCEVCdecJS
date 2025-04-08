@@ -27,6 +27,7 @@ This project is designed to work alongside an existing player rather than on its
 Barebones implementation may be accomplished using [Media Source Extensions](https://developer.mozilla.org/en-US/docs/Web/API/MediaSource), however, we recommend using an officially supported player, such as the [Shaka Player](https://github.com/shaka-project/shaka-player) for ease of use. 
 ## Demos 
 - [LCEVC integration with Shaka Player project]( https://shaka-player-demo.appspot.com/demo/#panel=ALL_CONTENT;panelData=LCEVC;build=uncompiled)  
+- [LCEVC integration with dash.js Player](https://reference.dashif.org/dash.js/nightly/samples/lcevc-sei/lcevc-sei.html)
 
 
 ## Shaka Player Integration 

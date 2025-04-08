@@ -21,6 +21,8 @@
  * BSD-3-CLAUSE-CLEAR LICENSE.
  */
 
+import { Log } from '../log';
+
 declare var libDPIModule: any
 /* global libDPIModule */
 
@@ -28,13 +30,20 @@ declare var libDPIModule: any
 let libDPI = null; // eslint-disable-line import/no-mutable-exports
 
 /** @exports @type {Promise} */
-const ready = new Promise((resolve, reject) => {
-  libDPIModule().then((Module) => {
-    libDPI = Module;
-    resolve(true);
-  }).catch(() => {
-    reject(new Error('Failed to load LCEVC.'));
-  });
+const ready = new Promise((resolve) => {
+  // Preliminary check for WebAssembly support
+  if (typeof WebAssembly === 'object') {
+    libDPIModule().then((Module) => {
+      libDPI = Module;
+      resolve(true);
+    }).catch(() => {
+      Log.always('Could not load WebAssembly, ensure file is reachable and browser supports it.');
+      resolve(false);
+    });
+  } else {
+    Log.always('Current platform does not support WebAssembly.');
+    resolve(false);
+  }
 });
 
 export { libDPI, ready };

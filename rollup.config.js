@@ -69,7 +69,19 @@ export default {
     webWorkerLoader({ loadPath: '', targetPlatform: 'browser' }),
     typescript({ tsconfig: 'tsconfig.json' }),
     eslint({ formatter: 'codeframe' }),
-    babel({ babelHelpers: 'bundled' }),
+    babel({
+      babelHelpers: 'bundled',
+      extensions: ['.ts', '.tsx', '.js', '.jsx'], // Ensure it picks up TS files
+      exclude: 'node_modules/**',
+      presets: [
+        ['@babel/preset-env', {
+          targets: '> 0.2%, not dead, ie 11',
+          useBuiltIns: 'entry',
+          corejs: 3
+        }],
+        '@babel/preset-typescript' // Ensure Babel understands TS
+      ]
+    }),
     production && terser({
       keep_fnames: false,
       safari10: true,
@@ -79,12 +91,12 @@ export default {
     }),
     replace({
       preventAssignment: true,
-      '__BUILD_DATE__': new Date().toLocaleDateString(),
+      __BUILD_DATE__: new Date().toLocaleDateString()
     }),
     production && execute({ commands: ['python3 concat/concat.py prod'], hook: 'writeBundle' }),
     !production && execute({ commands: ['python3 concat/concat.py debug'], hook: 'writeBundle' })
   ],
-  onwarn (warning, warn) {
+  onwarn(warning, warn) {
     // Skip warnings for non-existent exports as these are used to import JSDoc typedefs
     if (warning.code === 'NON_EXISTENT_EXPORT') return;
     warn(warning);

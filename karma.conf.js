@@ -20,8 +20,6 @@ module.exports = function(config) {
       { pattern: 'test/assets/nal-units/*.bin', watched: false, included: false, served: true, nocache: true },
       { pattern: 'dist/*.wasm', watched: true, included: false, served: true, nocache: true },
       { pattern: 'dist/*.js', watched: true, included: true, served: true, nocache: true },
-      { pattern: 'https://cdnjs.cloudflare.com/ajax/libs/mux.js/6.2.0/mux.min.js', watched: true, included: true, served: true, nocache: true },
-      { pattern: 'test/players/shaka/shaka-player.compiled.debug.js', watched: true, included: true, served: true, nocache: true },
       // { pattern: 'test/sync-assets/**/*.*', watched: false, included: false, served: true, nocache: true },
     ],
 

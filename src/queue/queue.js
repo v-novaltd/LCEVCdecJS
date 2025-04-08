@@ -1192,6 +1192,9 @@ class Queue {
       const packagerOffset = defaultPackagerOffset - this.#lcevcDec.firstKeyframeOffset;
       return { ...defaults, offset: defaults.offset + packagerOffset };
     }
+    if (!this.#live() && this.#env(Player.SHAKA, StreamingFormat.HLS, MediaContainer.MP4)) {
+      return { ...defaults, offset: this.#lcevcDec.firstKeyframeOffset };
+    }
 
     return defaults;
   }
