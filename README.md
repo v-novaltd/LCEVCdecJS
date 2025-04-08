@@ -21,6 +21,7 @@ LCEVC decoding support is included within the Shaka Player project from version 
 
 ## Demos 
 - [LCEVC integration with Shaka Player project]( https://shaka-player-demo.appspot.com/demo/#panel=ALL_CONTENT;panelData=LCEVC;build=uncompiled)  
+- [LCEVC integration with dash.js Player](https://reference.dashif.org/dash.js/nightly/samples/lcevc-sei/lcevc-sei.html)
 
 ## Building & Getting Started
 

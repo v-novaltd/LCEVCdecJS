@@ -235,20 +235,19 @@ const {
   osSupport,
   deviceSupport,
   browserSupport,
-  webAssemblySupport,
   mediasourceSupport
 } = SupportObject;
 
 if (osSupport
     && deviceSupport
     && browserSupport
-    && webAssemblySupport()
+    && SupportObject.webAssemblySupport()
     && mediasourceSupport) {
   support = true;
   error = 'No Errors';
 } else {
   error = SupportObject.Error;
-  if (!webAssemblySupport()) {
+  if (!SupportObject.webAssemblySupport()) {
     error = 'LCEVC Error: WebAssembly Verification failed is not supported!';
   }
 }

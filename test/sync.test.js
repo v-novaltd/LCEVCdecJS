@@ -1,4 +1,5 @@
 /* global shaka */
+import { loadToScriptTag } from './utils/loaders';
 
 const manifests = {
   FMP4_HLS: 'https://dyctis843rxh5.cloudfront.net/vnr4up99Z6W4vgUK/master.m3u8',
@@ -278,8 +279,13 @@ describe('Residual Synchronisation', () => {
       await new Promise((resolve) => { setTimeout(resolve, 800); });
     }
     await LCEVCdec.ready;
+    await loadToScriptTag('https://cdnjs.cloudflare.com/ajax/libs/shaka-player/4.12.6/shaka-player.ui.debug.js');
     await new Promise((resolve) => { setTimeout(resolve, 800); });
   }, TIMEOUT);
+
+  afterAll(() => {
+    delete window.shaka;
+  });
 
   /* eslint-disable compat/compat -- document.body() is not supported in Firefox 52 */
   beforeEach(() => {

@@ -1470,6 +1470,7 @@ class LCEVCdec {
    * @memberof LCEVCdec
    */
   async #renderPosterFrame() {
+    if (!this.#queue) return Result.OK;
     // If LCEVC data is loaded in the desired poster timestamp, grab it.
     if (this.#residualStore && this.#residualStore._hasLcevcData(this.#posterTimestamp)) {
       this.#queue._inputFrame(
@@ -1709,8 +1710,10 @@ class LCEVCdec {
         this.#video.style.display = 'block';
       }
     } else {
-      this.#oldCanvasPositionSaved = false;
-      this.#canvas.style.position = this.#oldCanvasPosition;
+      if (this.#oldCanvasPositionSaved) {
+        this.#oldCanvasPositionSaved = false;
+        this.#canvas.style.position = this.#oldCanvasPosition;
+      }
       this.#video.style.display = 'block';
       this.#canvas.style.width = '100%';
       this.#canvas.style.height = '100%';
