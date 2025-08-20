@@ -1877,7 +1877,9 @@ class LCEVCdec {
     // Clear previous render times because this will cause incorrect
     // audio delay to be calculated, since in PiP mode the
     // render times are inaccurate
-    this.#queue._clearPreviousRenderTimes();
+    if (this.#queue) {
+      this.#queue._clearPreviousRenderTimes();
+    }
 
     this.#pictureInPicture = {
       active: false,
@@ -2461,6 +2463,11 @@ class LCEVCdec {
       this.#lcevcWorker = null;
     }
 
+    // Cleanup PictureInPicture listeners.
+    if (window.documentPictureInPicture) {
+      this.#removeAllListeners(window.documentPictureInPicture, 'enter');
+    }
+
     // Video listeners.
     this.#unbindVideoEvents();
     this.#eventHandler = null;
@@ -2518,7 +2525,7 @@ class LCEVCdec {
       });
     }
 
-    console.info('::::: closing LCEVCdec :::::'); // eslint-disable-line
+    Log.always('Closing the LCEVC decoder.');
     return Result.OK;
   }
 
