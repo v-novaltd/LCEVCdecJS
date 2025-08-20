@@ -386,6 +386,7 @@ class Demuxer {
           // Raw LCEVC data can be directly passed to the residual store, whereas encapsulated
           // LCEVC data will need further demuxing and processing
           if (this.#isRawLcevc) {
+            Demuxer.convertLengthPrefixToAnnexB(data);
             this._demuxedLcevcData(data, ...frameSample.slice(0, -1), level);
           } else {
             Demuxer.convertLengthPrefixToAnnexB(data);

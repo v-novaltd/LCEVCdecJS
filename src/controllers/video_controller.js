@@ -175,6 +175,9 @@ class VideoControls {
 
   /** @private @type {boolean} */
   #isLive = null;
+
+  /** @private @type {boolean} */
+  #hasCheckedLive = false;
   // #endregion
 
   // #region Events
@@ -834,7 +837,9 @@ class VideoControls {
    *
    * If the given time is greater than 1, then the video is a live one.
    * This can be a false positive if a live stream current time is less than 1
-   * when this is call.
+   * when this is called.
+   *
+   * This method can only be called once. Subsequent calls have no effect.
    *
    * @param {!number} currentTime The current time of the video.
    * @returns {Result} The status code.
@@ -842,7 +847,13 @@ class VideoControls {
    * @public
    */
   _checkIsLive(currentTime) {
+    if (this.#hasCheckedLive) {
+      return Result.OK;
+    }
+
     this.#isLive = currentTime > 1;
+    this.#hasCheckedLive = true;
+
     return Result.OK;
   }
 

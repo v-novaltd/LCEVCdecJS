@@ -789,7 +789,7 @@ class DPI {
    * @public
    */
   _reset(residualStore, timestamp, profileSwitch) {
-    Log.msg('reset');
+    Log.msg('Reset');
     this.#decoderResetProgress = true;
     libDPI._perseus_decoder_close(this.#lcevcDecoderPointer);
     this.#lcevcDecoderPointer = libDPI._perseus_decoder_open_wrapper(1);
@@ -807,9 +807,11 @@ class DPI {
       }
 
       if (!parsedLcevc) {
-        Log.warn(`Failed to load and parse lcevc data for timestamp: ${timestamp}`);
+        Log.warn(`Failed to load and parse LCEVC data for timestamp: ${timestamp}`);
         if (libDPI && this.#pssData.pointer) {
+          Log.debug('Freeing and re-allocating LCEVC data.');
           this.#freePssData();
+          this.#initPssData();
         }
         this.#decoderResetProgress = false;
         return Result.FAIL;
@@ -823,6 +825,18 @@ class DPI {
     }
 
     this.#decoderResetProgress = false;
+    return Result.OK;
+  }
+
+  /**
+   * Init the buffer for LCEVC data with an initial size of 1.
+   *
+   * @returns {Result} The status code.
+   * @memberof DPI
+   * @private
+   */
+  #initPssData() {
+    this.#pssData = { pointer: _createDataPointer(libDPI, new Uint8Array(1)), size: 1 };
     return Result.OK;
   }
 

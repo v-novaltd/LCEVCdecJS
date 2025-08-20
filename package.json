@@ -1,6 +1,6 @@
 {
 	"name": "lcevc_dec.js",
-	"version": "1.2.1",
+	"version": "1.3.0",
 	"description": "V-Nova MPEG-5 LCEVC Decoder",
 	"main": "dist/lcevc_dec.min.js",
 	"scripts": {
@@ -51,6 +51,7 @@
 		"@rollup/plugin-replace": "^4.0.0",
 		"@rollup/plugin-typescript": "^8.5.0",
 		"@types/estree": "^1.0.0",
+		"@types/node": "^22.17.1",
 		"@typescript-eslint/eslint-plugin": "^5.0.0",
 		"@typescript-eslint/parser": "^5.0.0",
 		"babel-loader": "^8.2.2",
